@@ -2150,23 +2150,3 @@
                 }
             });
         }
-
-        // Screen Reader Announcements
-        function announceToScreenReader(message) {
-            const mapStatus = document.getElementById('map-status');
-            mapStatus.textContent = message;
-            
-            // Also update timeline status
-            const timelineStatus = document.getElementById('timeline-status');
-            if (timelineStatus) {
-                timelineStatus.textContent = message;
-            }
-        }
-
-        function announceResultsCount() {
-            const resultsCount = document.getElementById('results-count');
-            resultsCount.textContent = `${currentFestivals.length} festival${currentFestivals.length !== 1 ? 's' : ''} found.`;
-        }
-    </script>
-</body>
-</html>
