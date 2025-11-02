@@ -1,6 +1,6 @@
 # CultureConnect - Global Festival Explorer
 
-![CultureConnect](https://img.shields.io/badge/CultureConnect-v1.0-purple?style=flat-square)
+![CultureConnect](https://roshankumar0036singh.github.io/-CultureConnect/)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 ![Contributors](https://img.shields.io/badge/Contributors-Welcome-orange?style=flat-square)
