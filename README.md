@@ -9,7 +9,7 @@
 
 A beautifully designed, interactive web application that celebrates cultural diversity by showcasing 50+ festivals from 25+ countries across 5 continents. CultureConnect creates an immersive, calming digital environment that encourages cultural exploration and fosters meaningful human connection through shared celebrations.
 
-**Repository:** [https://github.com/roshankumar0036singh/CultureConnect](https://github.com/roshankumar0036singh)
+**Repository:** [https://github.com/roshankumar0036singh/-CultureConnect](https://github.com/roshankumar0036singh)
 
 ## 🌍 Project Overview
 
