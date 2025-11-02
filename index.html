@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CultureConnect - Explore the World Through Celebrations. Discover diverse festivals and cultural celebrations from around the globe.">
-    <title>CultureConnect - Explore World Festivals</title>
+    <title>World Festival Explorer - Discover 50+ Festivals Worldwide</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <style>
-        /* CSS Reset and Variables */
         * {
             margin: 0;
             padding: 0;
@@ -17,777 +19,39 @@
         }
 
         :root {
-            --primary: #D2691E;
-            --secondary: #6B8E23;
-            --accent: #FFD700;
-            --dark-bg: #1A1A1A;
-            --dark-bg-2: #0A1628;
-            --light-text: #E8E8E8;
+            --primary-purple: #6D28D9;
+            --accent-purple: #A78BFA;
+            --dark-purple: #2D1B69;
+            --soft-lavender: #EDE9FE;
+            --gold-accent: #D4AF37;
+            --primary-orange: #D2691E;
+            --coral: #E17055;
+            --success-green: #1E7E34;
+            --dark-bg: #0F0A1C;
+            --light-bg: #F8F7F5;
+            --white: #FFFFFF;
             --dark-text: #1A1A1A;
-            --focus-color: #FFD700;
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-        }
-
-        html {
-            scroll-behavior: smooth;
+            --gray-text: #6B7280;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-bg-2) 100%);
-            color: var(--light-text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #FAF8FF 100%);
+            color: var(--dark-text);
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Skip to main content */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: var(--accent);
-            color: var(--dark-text);
-            padding: 8px 16px;
-            text-decoration: none;
-            font-weight: 600;
-            z-index: 100;
-            border-radius: 0 0 8px 0;
-        }
-
-        .skip-link:focus {
-            top: 0;
-            outline: 3px solid var(--focus-color);
-        }
-
-        /* Typography */
-        h1, h2, h3, h4 {
+        h1, h2, h3 {
             font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            line-height: 1.2;
         }
 
-        h1 { font-size: 3.5rem; }
-        h2 { font-size: 2.5rem; }
-        h3 { font-size: 1.8rem; }
-        h4 { font-size: 1.3rem; }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 80px 20px;
-            background: linear-gradient(135deg, rgba(210, 105, 30, 0.2), rgba(107, 142, 35, 0.2)),
-                        url('https://images.unsplash.com/photo-1522083165195-3424ed129620?w=1600') center/cover;
-            position: relative;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 900px;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        .hero-title {
-            font-family: 'Great Vibes', cursive;
-            font-size: 5rem;
-            color: var(--accent);
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .hero-tagline {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: var(--light-text);
-        }
-
-        .hero-description {
-            font-size: 1.1rem;
-            margin-bottom: 40px;
-            line-height: 1.8;
-            opacity: 0.9;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 16px 40px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 15px rgba(210, 105, 30, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(210, 105, 30, 0.5);
-        }
-
-        .btn-primary:focus {
-            outline: 3px solid var(--focus-color);
-            outline-offset: 3px;
-        }
-
-        /* Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Section */
-        section {
-            padding: 80px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 60px;
-            color: var(--accent);
-        }
-
-        .section-subtitle {
-            text-align: center;
-            font-size: 1.1rem;
-            margin-top: 10px;
-            opacity: 0.8;
-        }
-
-        /* World Map Section */
-        .map-section {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .world-map-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .map-svg {
-            width: 100%;
-            height: auto;
-            max-height: 600px;
-        }
-
-        .continent {
-            fill: var(--secondary);
-            stroke: var(--accent);
-            stroke-width: 1;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            opacity: 0.7;
-        }
-
-        .continent:hover,
-        .continent:focus {
-            fill: var(--primary);
-            opacity: 1;
-            stroke-width: 2;
-        }
-
-        .continent.active {
-            fill: var(--accent);
-            opacity: 1;
-        }
-
-        /* Filters */
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            margin-bottom: 40px;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .filter-group label {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--accent);
-        }
-
-        .search-input {
-            padding: 12px 20px;
-            border: 2px solid var(--glass-border);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--light-text);
-            font-size: 1rem;
-            min-width: 250px;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: 3px solid var(--focus-color);
-            border-color: var(--accent);
-        }
-
-        .search-input::placeholder {
-            color: rgba(232, 232, 232, 0.5);
-        }
-
-        .month-slider {
-            width: 250px;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(255, 255, 255, 0.2);
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .month-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--accent);
-            cursor: pointer;
-        }
-
-        .month-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--accent);
-            cursor: pointer;
-            border: none;
-        }
-
-        .month-slider:focus {
-            outline: 3px solid var(--focus-color);
-            outline-offset: 3px;
-        }
-
-        .clear-filters {
-            padding: 10px 24px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--light-text);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .clear-filters:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .clear-filters:focus {
-            outline: 3px solid var(--focus-color);
-        }
-
-        /* Festival Grid */
-        .festival-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .festival-card {
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .festival-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
-        }
-
-        .festival-card:focus-within {
-            outline: 3px solid var(--focus-color);
-            outline-offset: 3px;
-        }
-
-        .festival-card-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-
-        .festival-card-content {
-            padding: 20px;
-        }
-
-        .festival-card-title {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-            color: var(--accent);
-        }
-
-        .festival-card-meta {
-            display: flex;
-            gap: 15px;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-bottom: 10px;
-        }
-
-        .festival-card-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(210, 105, 30, 0.95), rgba(107, 142, 35, 0.95));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 30px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .festival-card:hover .festival-card-overlay,
-        .festival-card:focus-within .festival-card-overlay {
-            opacity: 1;
-        }
-
-        .overlay-purpose {
-            font-size: 1rem;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-
-        .overlay-activities {
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        .overlay-activities ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .overlay-activities li {
-            padding: 5px 0;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .overlay-activities li::before {
-            content: '✦';
-            position: absolute;
-            left: 0;
-            color: var(--accent);
-        }
-
-        /* Timeline */
-        .timeline-section {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .timeline-container {
-            position: relative;
-            padding: 40px 0;
-        }
-
-        .timeline-line {
-            position: absolute;
-            top: 50px;
-            left: 5%;
-            right: 5%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--secondary), var(--primary), var(--accent));
-            border-radius: 2px;
-        }
-
-        .timeline-months {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            padding: 0 5%;
-        }
-
-        .timeline-month {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .timeline-month:focus {
-            outline: 3px solid var(--focus-color);
-            outline-offset: 5px;
-            border-radius: 8px;
-        }
-
-        .month-dot {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--secondary);
-            border: 3px solid var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 2;
-        }
-
-        .timeline-month:hover .month-dot,
-        .timeline-month.active .month-dot {
-            transform: scale(1.3);
-            background: var(--primary);
-            box-shadow: 0 0 20px var(--accent);
-        }
-
-        .month-label {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .month-festivals {
-            display: none;
-            margin-top: 40px;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .month-festivals.active {
-            display: block;
-        }
-
-        .month-festivals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .month-festival-item {
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .month-festival-item:hover,
-        .month-festival-item:focus {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
-
-        .month-festival-item:focus {
-            outline: 3px solid var(--focus-color);
-        }
-
-        /* Detail Modal */
-        .detail-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            overflow-y: auto;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .detail-modal.active {
-            display: block;
-        }
-
-        .detail-content {
-            max-width: 1000px;
-            margin: 50px auto;
-            padding: 40px;
-            background: linear-gradient(135deg, var(--dark-bg), var(--dark-bg-2));
-            border-radius: 20px;
-            border: 2px solid var(--glass-border);
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-modal:hover {
-            transform: rotate(90deg);
-            background: var(--accent);
-            color: var(--dark-text);
-        }
-
-        .close-modal:focus {
-            outline: 3px solid var(--focus-color);
-        }
-
-        .detail-header {
-            margin-bottom: 30px;
-        }
-
-        .detail-title {
-            font-size: 3rem;
-            color: var(--accent);
-            margin-bottom: 15px;
-        }
-
-        .detail-meta {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            font-size: 1.1rem;
-        }
-
-        .detail-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .detail-meta-item strong {
-            color: var(--accent);
-        }
-
-        /* Gallery */
-        .gallery {
-            position: relative;
-            margin: 40px 0;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .gallery-main {
-            position: relative;
-            height: 500px;
-        }
-
-        .gallery-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .gallery-image.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .gallery-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        .gallery-controls {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(-50%);
-            padding: 0 20px;
-        }
-
-        .gallery-btn {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--dark-text);
-        }
-
-        .gallery-btn:hover {
-            background: var(--accent);
-            transform: scale(1.1);
-        }
-
-        .gallery-btn:focus {
-            outline: 3px solid var(--focus-color);
-        }
-
-        .gallery-thumbnails {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
-        }
-
-        .gallery-thumb {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .gallery-thumb.active,
-        .gallery-thumb:hover {
-            opacity: 1;
-            border-color: var(--accent);
-        }
-
-        .gallery-thumb:focus {
-            outline: 3px solid var(--focus-color);
-        }
-
-        /* Detail Sections */
-        .detail-section {
-            margin: 40px 0;
-        }
-
-        .detail-section h3 {
-            color: var(--accent);
-            margin-bottom: 20px;
-        }
-
-        .detail-section p {
-            line-height: 1.8;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-
-        .activities-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .activities-list li {
-            padding: 12px 0;
-            padding-left: 30px;
-            position: relative;
-            font-size: 1.05rem;
-            line-height: 1.6;
-        }
-
-        .activities-list li::before {
-            content: '✦';
-            position: absolute;
-            left: 0;
-            color: var(--accent);
-            font-size: 1.2rem;
-        }
-
-        .did-you-know {
-            background: linear-gradient(135deg, rgba(210, 105, 30, 0.2), rgba(107, 142, 35, 0.2));
-            padding: 30px;
-            border-radius: 12px;
-            border-left: 5px solid var(--accent);
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        .did-you-know strong {
-            color: var(--accent);
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.3rem;
-        }
-
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: var(--accent);
-        }
-
-        /* No Results */
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            font-size: 1.3rem;
-            color: var(--accent);
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
         }
 
         /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -799,1354 +63,2027 @@
             }
         }
 
-        /* Accessibility */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        /* Responsive Design */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: rgba(109, 40, 217, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(109, 40, 217, 0.2);
+            border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        .navbar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--light);
+            text-decoration: none;
+        }
+
+        .navbar-brand span {
+            color: var(--gold-accent);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: var(--light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--primary-purple) 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(167, 139, 250, 0.4);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .search-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--gold-accent) 0%, var(--primary-orange) 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 160px);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Home Page */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--dark-purple) 50%, var(--gold-accent) 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.2) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 900;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: -1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--accent-purple) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(109, 40, 217, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(109, 40, 217, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: var(--primary-purple);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 255, 255, 0.4);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            padding: 3rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(109, 40, 217, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-purple), var(--accent-purple), var(--gold-accent));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(109, 40, 217, 0.25);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--mid-gray);
+            margin-top: 0.5rem;
+        }
+
+        .featured-section {
+            padding: 3rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        /* Festival Cards */
+        .festival-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .festival-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(109, 40, 217, 0.12);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .festival-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .festival-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(109, 40, 217, 0.25);
+        }
+
+        .festival-card:hover::after {
+            opacity: 1;
+        }
+
+        .festival-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s;
+            position: relative;
+        }
+
+        .festival-card:hover .festival-image {
+            transform: scale(1.1);
+        }
+
+        .festival-content {
+            padding: 1.5rem;
+        }
+
+        .festival-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .festival-location {
+            color: var(--mid-gray);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .festival-month {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            color: white;
+            padding: 0.3rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(109, 40, 217, 0.3);
+        }
+
+        .continent-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .continent-asia { background-color: #FFE5B4; color: #8B4513; }
+        .continent-europe { background-color: #E0F7FA; color: #006064; }
+        .continent-africa { background-color: #FFF3E0; color: #E65100; }
+        .continent-americas { background-color: #F3E5F5; color: #4A148C; }
+        .continent-oceania { background-color: #E8F5E9; color: #1B5E20; }
+
+        .festival-description {
+            color: var(--dark);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid var(--accent-purple);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: var(--primary-purple);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .pagination-btn:hover {
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(109, 40, 217, 0.3);
+        }
+
+        .pagination-btn.active {
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            color: white;
+            box-shadow: 0 4px 15px rgba(109, 40, 217, 0.3);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-select {
+            padding: 0.7rem 1.2rem;
+            border: 2px solid var(--accent-purple);
+            border-radius: 25px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--primary-purple);
+            font-weight: 600;
+        }
+
+        .filter-select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3);
+            border-color: var(--primary-purple);
+        }
+
+        /* Timeline */
+        .timeline-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .timeline {
+            position: relative;
+        }
+
+        .timeline-month {
+            margin-bottom: 3rem;
+        }
+
+        .month-header {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary-purple);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 4px solid transparent;
+            border-image: linear-gradient(90deg, var(--primary-purple), var(--accent-purple), var(--gold-accent));
+            border-image-slice: 1;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .timeline-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .timeline-item {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 5px solid var(--primary-purple);
+            box-shadow: 0 4px 20px rgba(109, 40, 217, 0.1);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(167, 139, 250, 0.15);
+        }
+
+        .timeline-item:hover {
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(109, 40, 217, 0.25);
+            border-left-color: var(--accent-purple);
+        }
+
+        .timeline-item-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .timeline-item-location {
+            color: var(--mid-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Map */
+        .map-container {
+            padding: 2rem;
+            padding-top: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        #map {
+            height: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .map-controls {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Festival Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 24px;
+            max-width: 800px;
+            box-shadow: 0 20px 60px rgba(109, 40, 217, 0.3);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            position: relative;
+            animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .modal-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: white;
+            color: var(--dark);
+            border: none;
+            font-size: 2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            color: white;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-title {
+            font-size: 2.25rem;
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            font-weight: 900;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .modal-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            background: linear-gradient(135deg, rgba(237, 233, 254, 0.5), rgba(255, 255, 255, 0.8));
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            transition: all 0.3s;
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(109, 40, 217, 0.15);
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: var(--gray-text);
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: var(--primary-purple);
+            font-weight: 600;
+        }
+
+        .modal-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-section h3 {
+            font-size: 1.4rem;
+            color: var(--primary-purple);
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .activities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .activity-tag {
+            background: linear-gradient(135deg, var(--accent-purple), var(--primary-purple));
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(109, 40, 217, 0.25);
+            transition: all 0.3s;
+        }
+
+        .activity-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(109, 40, 217, 0.4);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Search Results */
+        .search-results {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .search-header {
+            margin-bottom: 2rem;
+        }
+
+        .search-term {
+            color: var(--primary-bold);
+            font-weight: bold;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.25rem;
+            color: var(--mid-gray);
+        }
+
+        /* Compare Section */
+        .compare-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .compare-selection {
+            margin-bottom: 2rem;
+        }
+
+        .compare-selects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .compare-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .compare-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .compare-table th {
+            background-color: var(--accent-deep);
+            color: white;
+            font-weight: bold;
+        }
+
+        .compare-table tr:hover {
+            background-color: var(--light);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--dark-purple) 0%, var(--dark-bg) 100%);
+            color: var(--soft-lavender);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+            border-top: 2px solid var(--primary-purple);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer a {
+            color: var(--gold-accent);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--accent-purple);
+            text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            h2 { font-size: 2rem; }
-            .hero-title { font-size: 3.5rem; }
-            .hero-tagline { font-size: 1.3rem; }
-            
+            .navbar-container {
+                flex-direction: column;
+            }
+
+            .navbar-nav {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-bar {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
             .festival-grid {
                 grid-template-columns: 1fr;
             }
 
-            .filters {
-                flex-direction: column;
+            #map {
+                height: 400px;
             }
 
-            .timeline-months {
-                flex-wrap: wrap;
-                gap: 20px;
-            }
-
-            .detail-content {
-                margin: 20px;
-                padding: 30px 20px;
-            }
-
-            .detail-title {
-                font-size: 2rem;
-            }
-
-            .gallery-main {
-                height: 300px;
+            .modal-content {
+                margin: 2% 5%;
+                max-width: 90%;
             }
         }
 
-        @media (max-width: 480px) {
-            .hero-title { font-size: 2.5rem; }
-            .btn { padding: 12px 30px; }
-            .month-label { font-size: 0.7rem; }
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.25rem;
+            color: var(--mid-gray);
         }
 
-        /* Focus visible for keyboard navigation */
-        *:focus-visible {
-            outline: 3px solid var(--focus-color);
-            outline-offset: 3px;
+        /* Leaflet custom styles */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+        }
+
+        .popup-content {
+            text-align: center;
+        }
+
+        .popup-content h4 {
+            color: var(--accent-deep);
+            margin-bottom: 0.5rem;
+        }
+
+        .popup-content p {
+            color: var(--mid-gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .popup-btn {
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .popup-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(109, 40, 217, 0.4);
+        }
+
+        /* Custom marker colors */
+        .marker-cluster-small {
+            background-color: rgba(167, 139, 250, 0.6);
+        }
+
+        .marker-cluster-small div {
+            background-color: rgba(109, 40, 217, 0.8);
+        }
+
+        .marker-cluster-medium {
+            background-color: rgba(167, 139, 250, 0.6);
+        }
+
+        .marker-cluster-medium div {
+            background-color: rgba(109, 40, 217, 0.8);
+        }
+
+        .marker-cluster-large {
+            background-color: rgba(167, 139, 250, 0.6);
+        }
+
+        .marker-cluster-large div {
+            background-color: rgba(109, 40, 217, 0.8);
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(109, 40, 217, 0.4);
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(109, 40, 217, 0.6);
+        }
+
+        .back-to-top.show {
+            display: flex;
+        }
+
+        /* Favorites Heart Button */
+        .favorite-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .favorite-btn.active {
+            background: linear-gradient(135deg, #FF6B9D, #C73866);
+        }
+
+        .favorite-btn i {
+            color: var(--primary-purple);
+            font-size: 1.2rem;
+        }
+
+        .favorite-btn.active i {
+            color: white;
+        }
+
+        /* Category Badge */
+        .category-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(109, 40, 217, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(109, 40, 217, 0.4);
+        }
+
+        /* Newsletter Modal */
+        .newsletter-modal {
+            display: none;
+            position: fixed;
+            z-index: 2001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 10, 28, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .newsletter-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .newsletter-content {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--dark-purple) 100%);
+            padding: 3rem;
+            border-radius: 24px;
+            max-width: 500px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 20px 60px rgba(109, 40, 217, 0.5);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .newsletter-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .newsletter-content p {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .newsletter-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+            border-color: var(--gold-accent);
         }
     </style>
 </head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-
-    <!-- Hero Section -->
-    <header class="hero" role="banner">
-        <div class="hero-content">
-            <h1 class="hero-title">CultureConnect</h1>
-            <p class="hero-tagline">Explore the World Through Celebrations</p>
-            <p class="hero-description">
-                Discover diverse festivals and cultural celebrations from around the globe. 
-                Immerse yourself in the traditions, stories, and joy that unite us all.
-            </p>
-            <a href="#festival-catalog" class="btn btn-primary" aria-label="Explore festivals from around the world">Explore Festivals</a>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand" onclick="showPage('home')">
+                Festival<span>Explorer</span>
+            </a>
+            <div class="search-bar">
+                <input type="text" class="search-input" id="globalSearch" placeholder="Search festivals by name, country, or month...">
+                <button class="search-btn" onclick="performSearch()">Search</button>
+            </div>
+            <ul class="navbar-nav">
+                <li><a href="#" class="nav-link active" onclick="showPage('home')">Home</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('gallery')">Festival Gallery</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('timeline')">Timeline</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('map')">Map</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('compare')">Compare</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('favorites')"><i class="fas fa-heart"></i> Favorites</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('planner')"><i class="fas fa-calendar-check"></i> Planner</a></li>
+            </ul>
         </div>
-    </header>
+    </nav>
 
-    <main id="main-content">
-        <!-- World Map Section -->
-        <section class="map-section" aria-labelledby="map-title">
-            <div class="container">
-                <h2 id="map-title" class="section-title">Explore by Region</h2>
-                <p class="section-subtitle">Click on a continent to discover its festivals</p>
-                
-                <div class="world-map-container">
-                    <svg class="map-svg" viewBox="0 0 1000 500" role="img" aria-label="Interactive world map showing continents">
-                        <title>World Map - Click continents to filter festivals</title>
-                        <!-- Africa -->
-                        <path class="continent" data-continent="Africa" tabindex="0" role="button" aria-label="Africa - 3 festivals"
-                            d="M 520 200 L 540 210 L 545 230 L 540 250 L 535 270 L 540 290 L 530 310 L 520 320 L 505 315 L 495 305 L 490 285 L 485 265 L 480 245 L 485 225 L 500 210 Z"
-                            fill="var(--secondary)" stroke="var(--accent)" stroke-width="1" />
-                        
-                        <!-- Europe -->
-                        <path class="continent" data-continent="Europe" tabindex="0" role="button" aria-label="Europe - 6 festivals"
-                            d="M 480 140 L 510 135 L 540 140 L 560 155 L 565 170 L 555 185 L 535 190 L 515 185 L 495 175 L 485 160 Z"
-                            fill="var(--secondary)" stroke="var(--accent)" stroke-width="1" />
-                        
-                        <!-- Asia -->
-                        <path class="continent" data-continent="Asia" tabindex="0" role="button" aria-label="Asia - 10 festivals"
-                            d="M 570 150 L 650 145 L 720 155 L 760 170 L 780 190 L 785 215 L 775 240 L 750 255 L 715 260 L 680 255 L 650 245 L 620 230 L 590 210 L 570 185 Z"
-                            fill="var(--secondary)" stroke="var(--accent)" stroke-width="1" />
-                        
-                        <!-- Americas -->
-                        <path class="continent" data-continent="Americas" tabindex="0" role="button" aria-label="Americas - 5 festivals"
-                            d="M 220 150 L 250 145 L 270 160 L 280 185 L 285 215 L 280 245 L 275 275 L 270 305 L 255 330 L 235 340 L 220 335 L 210 310 L 205 280 L 200 250 L 205 220 L 215 190 Z"
-                            fill="var(--secondary)" stroke="var(--accent)" stroke-width="1" />
-                        
-                        <!-- Oceania -->
-                        <path class="continent" data-continent="Oceania" tabindex="0" role="button" aria-label="Oceania - 1 festival"
-                            d="M 800 320 L 830 315 L 860 320 L 875 335 L 880 355 L 870 370 L 850 375 L 825 370 L 810 355 L 805 340 Z"
-                            fill="var(--secondary)" stroke="var(--accent)" stroke-width="1" />
-                    </svg>
-                </div>
-
-                <div role="status" aria-live="polite" class="sr-only" id="map-status"></div>
-            </div>
-        </section>
-
-        <!-- Festival Catalog Section -->
-        <section id="festival-catalog" aria-labelledby="catalog-title">
-            <div class="container">
-                <h2 id="catalog-title" class="section-title">Festival Catalog</h2>
-                
-                <!-- Filters -->
-                <div class="filters" role="search" aria-label="Festival filters">
-                    <div class="filter-group">
-                        <label for="search-input">Search Festivals</label>
-                        <input type="text" id="search-input" class="search-input" placeholder="Search by name or country..." aria-label="Search festivals by name or country" />
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="month-slider">Filter by Month: <span id="month-label">All Months</span></label>
-                        <input type="range" id="month-slider" class="month-slider" min="0" max="12" value="0" aria-label="Filter festivals by month" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0" />
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label>&nbsp;</label>
-                        <button class="clear-filters" id="clear-filters" aria-label="Clear all filters">Clear Filters</button>
-                    </div>
-                </div>
-
-                <div role="status" aria-live="polite" aria-atomic="true" id="results-count" class="sr-only"></div>
-
-                <!-- Festival Grid -->
-                <div class="festival-grid" id="festival-grid" role="list" aria-label="Festival cards">
-                    <!-- Festival cards will be inserted here by JavaScript -->
-                </div>
-
-                <div class="no-results" id="no-results" style="display: none;" role="alert">
-                    No festivals found. Try adjusting your filters.
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>Explore 50+ World Festivals</h1>
+                <p>Discover cultural celebrations from every continent. Plan your next adventure!</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="showPage('gallery')">Browse Festivals</button>
+                    <button class="btn btn-secondary" onclick="showPage('map')">View Map</button>
                 </div>
             </div>
-        </section>
 
-        <!-- Timeline Section -->
-        <section class="timeline-section" aria-labelledby="timeline-title">
-            <div class="container">
-                <h2 id="timeline-title" class="section-title">Annual Festival Timeline</h2>
-                <p class="section-subtitle">Explore festivals throughout the year</p>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Festivals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">35+</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Continents</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Months</div>
+                </div>
+            </div>
+
+            <div class="featured-section">
+                <h2 class="section-title">Featured Festivals</h2>
+                <div class="festival-grid" id="featuredFestivals"></div>
+            </div>
+        </div>
+
+        <!-- Gallery Page -->
+        <div id="gallery" class="page">
+            <div class="featured-section">
+                <h2 class="section-title">Festival Gallery</h2>
                 
-                <div class="timeline-container">
-                    <div class="timeline-line" role="presentation"></div>
-                    <div class="timeline-months" role="list" aria-label="Monthly timeline">
-                        <!-- Timeline months will be inserted here -->
-                    </div>
-                    
-                    <div id="month-festivals-container">
-                        <!-- Month festival details will be inserted here -->
+                <div class="filter-section">
+                    <select class="filter-select" id="continentFilter" onchange="applyFilters()">
+                        <option value="all">All Continents</option>
+                        <option value="Asia">Asia</option>
+                        <option value="Europe">Europe</option>
+                        <option value="Africa">Africa</option>
+                        <option value="Americas">Americas</option>
+                        <option value="Oceania">Oceania</option>
+                    </select>
+                    <select class="filter-select" id="monthFilter" onchange="applyFilters()">
+                        <option value="all">All Months</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+
+                <div class="festival-grid" id="galleryFestivals"></div>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </div>
+
+        <!-- Timeline Page -->
+        <div id="timeline" class="page">
+            <div class="timeline-container">
+                <h2 class="section-title">Festival Timeline</h2>
+                <div class="timeline" id="timelineContent"></div>
+            </div>
+        </div>
+
+        <!-- Map Page -->
+        <div id="map-page" class="page">
+            <div class="map-container">
+                <h2 class="section-title">Festival Locations</h2>
+                <div class="map-controls">
+                    <select class="filter-select" id="mapContinentFilter" onchange="filterMapMarkers()">
+                        <option value="all">All Continents</option>
+                        <option value="Asia">Asia</option>
+                        <option value="Europe">Europe</option>
+                        <option value="Africa">Africa</option>
+                        <option value="Americas">Americas</option>
+                        <option value="Oceania">Oceania</option>
+                    </select>
+                </div>
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <!-- Compare Page -->
+        <div id="compare" class="page">
+            <div class="compare-container">
+                <h2 class="section-title">Compare Festivals</h2>
+                
+                <div class="compare-selection">
+                    <h3>Select festivals to compare:</h3>
+                    <div class="compare-selects">
+                        <select class="filter-select" id="compare1" onchange="updateComparison()">
+                            <option value="">Select Festival 1</option>
+                        </select>
+                        <select class="filter-select" id="compare2" onchange="updateComparison()">
+                            <option value="">Select Festival 2</option>
+                        </select>
+                        <select class="filter-select" id="compare3" onchange="updateComparison()">
+                            <option value="">Select Festival 3 (Optional)</option>
+                        </select>
                     </div>
                 </div>
 
-                <div role="status" aria-live="polite" class="sr-only" id="timeline-status"></div>
+                <div class="compare-table" id="comparisonTable"></div>
             </div>
-        </section>
-    </main>
+        </div>
 
-    <!-- Detail Modal -->
-    <div class="detail-modal" id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
-        <div class="detail-content">
-            <button class="close-modal" id="close-modal" aria-label="Close festival details">&times;</button>
-            
-            <div id="modal-content">
-                <!-- Festival details will be inserted here -->
+        <!-- Search Results Page -->
+        <div id="search-results" class="page">
+            <div class="search-results">
+                <div class="search-header">
+                    <h2 class="section-title">Search Results</h2>
+                    <p>Showing results for: <span class="search-term" id="searchTerm"></span></p>
+                </div>
+                <div class="festival-grid" id="searchResultsGrid"></div>
+            </div>
+        </div>
+
+        <!-- Favorites Page -->
+        <div id="favorites" class="page">
+            <div class="featured-section">
+                <h2 class="section-title"><i class="fas fa-heart" style="color: #FF6B9D;"></i> My Favorites</h2>
+                <p style="text-align: center; color: var(--gray-text); margin-bottom: 2rem;">Your collection of favorite festivals from around the world</p>
+                <div class="festival-grid" id="favoritesGrid"></div>
+            </div>
+        </div>
+
+        <!-- Planner Page -->
+        <div id="planner" class="page">
+            <div class="featured-section">
+                <h2 class="section-title"><i class="fas fa-calendar-check"></i> Festival Planner</h2>
+                <p style="text-align: center; color: var(--gray-text); margin-bottom: 2rem;">Plan your festival journey and create your dream itinerary</p>
+                <div class="planner-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-number" id="plannedCount">0</div>
+                        <div class="stat-label">Festivals Planned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="countriesCount">0</div>
+                        <div class="stat-label">Countries</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="continentsCount">0</div>
+                        <div class="stat-label">Continents</div>
+                    </div>
+                </div>
+                <div class="festival-grid" id="plannerGrid"></div>
             </div>
         </div>
     </div>
 
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Newsletter Modal -->
+    <div id="newsletterModal" class="newsletter-modal">
+        <div class="newsletter-content">
+            <h2>✨ Stay Updated!</h2>
+            <p>Join our community and get notified about new festivals and exclusive travel tips!</p>
+            <input type="email" class="newsletter-input" placeholder="Enter your email" id="newsletterEmail">
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn btn-primary" onclick="subscribeNewsletter()" style="flex: 1;">Subscribe</button>
+                <button class="btn btn-secondary" onclick="closeNewsletterModal()" style="flex: 1;">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Festival Detail Modal -->
+    <div id="festivalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="modalImage" src="" alt="Festival">
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                
+                <div class="modal-info">
+                    <div class="info-item">
+                        <div class="info-label">Country</div>
+                        <div class="info-value" id="modalCountry"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Continent</div>
+                        <div class="info-value" id="modalContinent"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Month</div>
+                        <div class="info-value" id="modalMonth"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Coordinates</div>
+                        <div class="info-value" id="modalCoordinates"></div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Significance</h3>
+                    <p id="modalSignificance"></p>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Activities &amp; Traditions</h3>
+                    <div class="activities-list" id="modalActivities"></div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="showOnMap()">View on Map</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Festival Explorer. All rights reserved.</p>
+            <p>Discover cultural celebrations from around the world.</p>
+            <p>Made with ❤️ for festival enthusiasts worldwide</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script>
         // Festival Data
-        const festivalsData = [
-            {
-                id: 1,
-                name: "Diwali",
-                country: "India",
-                continent: "Asia",
-                month: 11,
-                purpose: "Festival of Lights - triumph of light over darkness, good over evil. A celebration of spiritual victory and renewal.",
-                history: "Diwali's origins trace back over 2,500 years to ancient Hindu texts like the Ramayana and Mahabharata. The festival celebrates Lord Rama's return from exile and his victory over the demon Ravana. Over centuries, Diwali has evolved to be celebrated by Hindus, Sikhs, Buddhists, and Jains across India and the world, each with their own traditions and significance.",
-                mainActivities: [
-                    "Lighting oil lamps (diyas) to symbolize light",
-                    "Bursting fireworks across the sky",
-                    "Exchange of sweets and gifts with loved ones",
-                    "Wearing new clothes and decorations",
-                    "Family gatherings and feasts",
-                    "Rangoli (decorative colorful patterns)"
-                ],
-                didYouKnow: "During Diwali, over 300 million oil lamps are lit across India. The festival is celebrated by more than 1 billion people worldwide.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1606144231984-8505220c5ecd?w=800", caption: "Traditional oil lamps (diyas) lit during Diwali", alt: "Row of burning oil lamps illuminating the darkness" },
-                    { url: "https://images.unsplash.com/photo-1609249068813-4e7877a95eca?w=800", caption: "Colorful rangoli patterns", alt: "Intricate colorful decorative rangoli pattern" },
-                    { url: "https://images.unsplash.com/photo-1606144231984-8505220c5ecd?w=800", caption: "Diwali celebration with lights", alt: "Diwali lights and decorations" },
-                    { url: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800", caption: "Fireworks during Diwali", alt: "Colorful fireworks lighting up the night sky" }
-                ],
-                duration: "5 days",
-                scale: "National"
-            },
-            {
-                id: 2,
-                name: "Holi",
-                country: "India",
-                continent: "Asia",
-                month: 3,
-                purpose: "Festival of Colors - celebrating the arrival of spring, victory of good over evil, and the renewal of relationships.",
-                history: "Holi is one of the oldest and most significant Hindu festivals, dating back to pre-Christian times. The festival has deep roots in Hindu mythology, particularly the story of Prahlad and the demon Holika. Over centuries, Holi has evolved into a celebration of spring and new beginnings, embracing all people regardless of caste or creed.",
-                mainActivities: [
-                    "Playing with colored powder (gulal)",
-                    "Throwing colored water balloons and spraying water",
-                    "Building and burning bonfires (Holika Dahan)",
-                    "Preparing traditional sweets and snacks",
-                    "Family and community gatherings",
-                    "Singing traditional Holi songs"
-                ],
-                didYouKnow: "Holi is often called the 'Festival of Colors' and is celebrated with equal enthusiasm by people of all religions in India. The colors used are traditionally made from natural ingredients like flowers and herbs.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Children playing with Holi colors", alt: "People playing with colorful powder during Holi" },
-                    { url: "https://images.unsplash.com/photo-1604981809414-70c1e3eb8bb2?w=800", caption: "Colored powder in the air", alt: "Vibrant colored powder clouds" },
-                    { url: "https://images.unsplash.com/photo-1488286313714-a70c5b4c6e9f?w=800", caption: "Holi bonfire celebration", alt: "Traditional Holi bonfire (Holika Dahan)" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Holi festival gathering", alt: "People celebrating together during Holi" }
-                ],
-                duration: "2 days",
-                scale: "National"
-            },
-            {
-                id: 3,
-                name: "Chinese New Year (Spring Festival)",
-                country: "China",
-                continent: "Asia",
-                month: 2,
-                purpose: "Lunar New Year celebration marking the beginning of a new year in the lunar calendar, symbolizing new beginnings and family unity.",
-                history: "Chinese New Year is one of the most important and celebrated holidays in Chinese culture, with a history spanning over 3,500 years. Also known as the Spring Festival or Lunar New Year, it marks the beginning of a new year in the lunar calendar. The celebration is rooted in ancient rituals to ward off evil spirits and welcome good fortune and prosperity.",
-                mainActivities: [
-                    "Family reunions and feasts",
-                    "Decorating with red lanterns and couplets",
-                    "Exchanging red envelopes (hongbao) with money",
-                    "Setting off fireworks and firecrackers",
-                    "Lion and dragon dances through streets",
-                    "Cleaning homes to sweep away bad luck"
-                ],
-                didYouKnow: "Chinese New Year is celebrated by over 2 billion people worldwide. The celebration lasts for 15 days, with the first day being the most important.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1582039494576-5146fb764875?w=800", caption: "Red lanterns during Chinese New Year", alt: "Vibrant red lanterns hanging in celebration" },
-                    { url: "https://images.unsplash.com/photo-1616137466211-f939a420be19?w=800", caption: "Dragon dance performance", alt: "Elaborate dragon dance with performers" },
-                    { url: "https://images.unsplash.com/photo-1549912359-1a2e7a23e6ef?w=800", caption: "Fireworks during celebration", alt: "Colorful fireworks lighting the night sky" },
-                    { url: "https://images.unsplash.com/photo-1549912359-1a2e7a23e6ef?w=800", caption: "Traditional decorations", alt: "Red envelopes and traditional decorations" }
-                ],
-                duration: "15 days",
-                scale: "International"
-            },
-            {
-                id: 4,
-                name: "Oktoberfest",
-                country: "Germany",
-                continent: "Europe",
-                month: 10,
-                purpose: "World's largest beer festival celebrating Bavarian culture, beer, and autumn traditions with food and music.",
-                history: "Oktoberfest began in 1810 as a celebration of the royal wedding of Crown Prince Ludwig and Princess Therese of Saxe-Hildburghausen. What started as a one-time celebration has evolved into the world's largest annual folk festival. Held annually in Munich, Bavaria, it has become a symbol of German culture and beer heritage worldwide.",
-                mainActivities: [
-                    "Drinking traditional Bavarian beer from large mugs",
-                    "Eating traditional Bavarian food (bratwurst, pretzels)",
-                    "Traditional Bavarian music and dancing",
-                    "Parade of breweries and beer wagons",
-                    "Wearing traditional Bavarian costumes (Tracht)",
-                    "Beer hall competitions and games"
-                ],
-                didYouKnow: "Oktoberfest attracts around 6 million visitors from around the world each year. The festival spans 16 days and uses approximately 1.4 million liters of beer annually.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Oktoberfest beer celebration", alt: "People celebrating with traditional Bavarian beer" },
-                    { url: "https://images.unsplash.com/photo-1504679641063-759bb6dd3a4e?w=800", caption: "Traditional Bavarian costumes", alt: "People in traditional Bavarian clothing" },
-                    { url: "https://images.unsplash.com/photo-1555939594-58d7cb561404?w=800", caption: "Bavarian music and dancing", alt: "Traditional Bavarian band performing" },
-                    { url: "https://images.unsplash.com/photo-1528148343865-4218c5c55bfd?w=800", caption: "Traditional pretzels and food", alt: "Large Bavarian pretzels on display" }
-                ],
-                duration: "16 days",
-                scale: "International"
-            },
-            {
-                id: 5,
-                name: "Carnival (Rio de Janeiro)",
-                country: "Brazil",
-                continent: "Americas",
-                month: 2,
-                purpose: "Celebration of Brazilian culture, music, and dance with elaborate parades and costumes before the Christian season of Lent.",
-                history: "Rio Carnival originated as a Portuguese tradition brought to Brazil during colonization. Over centuries, it blended with African, indigenous, and European influences to create a unique celebration. The modern Rio Carnival, with its samba schools and elaborate floats, became the world-famous festival we know today, first held in its current grand scale in the early 20th century.",
-                mainActivities: [
-                    "Samba school parades with elaborate floats",
-                    "Dancing to traditional samba music",
-                    "Wearing elaborate feathered and sequined costumes",
-                    "Street parties and balls across the city",
-                    "Live music performances",
-                    "Fireworks and light displays"
-                ],
-                didYouKnow: "Rio Carnival attracts nearly 2 million visitors and 500,000 performers. The samba school parades feature floats that can cost over $100,000 to construct.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1510812431401-26ff5984c3e5?w=800", caption: "Samba parade floats", alt: "Elaborate Carnival float with dancers" },
-                    { url: "https://images.unsplash.com/photo-1476973422084-e8fa66ff9895?w=800", caption: "Colorful Carnival costumes", alt: "Elaborate feathered and sequined costumes" },
-                    { url: "https://images.unsplash.com/photo-1551836022-4ad7b5265e1d?w=800", caption: "Street celebration", alt: "Crowded street celebration with dancers" },
-                    { url: "https://images.unsplash.com/photo-1570370142ef20f08e06b22227b46dc85?w=800", caption: "Night parade", alt: "Illuminated parade floats at night" }
-                ],
-                duration: "4 days",
-                scale: "International"
-            },
-            {
-                id: 6,
-                name: "Day of the Dead (Día de Muertos)",
-                country: "Mexico",
-                continent: "Americas",
-                month: 11,
-                purpose: "Celebration honoring deceased loved ones with altars, marigolds, and traditional foods, blending indigenous and Catholic traditions.",
-                history: "Day of the Dead has roots in ancient Aztec and Mayan civilizations where death was honored as part of the natural cycle. When Spanish conquistadors arrived, these traditions blended with Catholicism, creating the modern celebration. It became a UNESCO Intangible Cultural Heritage in 2005, recognized as a unique fusion of indigenous and European influences.",
-                mainActivities: [
-                    "Building ornate altars (ofrendas) for deceased family members",
-                    "Decorating with marigold flowers (cempasúchil)",
-                    "Preparing traditional foods like pan de muerto",
-                    "Creating and wearing skull makeup (calavera)",
-                    "Cemetery vigils and family gatherings",
-                    "Parades with skeleton costumes"
-                ],
-                didYouKnow: "The marigold flowers are believed to guide spirits to their altars. In Mexico, Day of the Dead is considered a celebration of life rather than a mournful event, with humor and joy being central to the festivities.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=800", caption: "Ornate Day of Dead altar", alt: "Traditional ofrenda with candles and flowers" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Skull makeup and decorations", alt: "Traditional skull face makeup" },
-                    { url: "https://images.unsplash.com/photo-1604981809414-70c1e3eb8bb2?w=800", caption: "Marigold flower decoration", alt: "Bright marigold flowers" },
-                    { url: "https://images.unsplash.com/photo-1604981809414-70c1e3eb8bb2?w=800", caption: "Cemetery celebration", alt: "Cemetery gathering during Day of the Dead" }
-                ],
-                duration: "2 days",
-                scale: "National"
-            },
-            {
-                id: 7,
-                name: "Timkat",
-                country: "Ethiopia",
-                continent: "Africa",
-                month: 1,
-                purpose: "Ethiopian Orthodox celebration of the baptism of Jesus Christ with holy water immersion and colorful processions.",
-                history: "Timkat is one of the oldest and most important festivals in the Ethiopian Orthodox Tewahedo Church. It celebrates the baptism of Jesus Christ in the Jordan River. The festival has been celebrated for centuries in Ethiopia, with roots in early Christian traditions, and continues to be a major religious and cultural event in Ethiopian society.",
-                mainActivities: [
-                    "Holy water immersion ceremonies",
-                    "Colorful processions with decorated clergy",
-                    "Singing and chanting of religious hymns",
-                    "Wearing white cotton clothes (shemma)",
-                    "Community celebrations and gatherings",
-                    "Feasting with traditional Ethiopian food"
-                ],
-                didYouKnow: "Timkat is celebrated for three days, with the main event being the Timkat Eve (Ketera) when clergy bless holy water. Thousands of pilgrims visit holy sites during the festival, and it is one of Ethiopia's most significant cultural events.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Timkat holy water ceremony", alt: "Ethiopian Timkat water blessing ceremony" },
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Religious procession", alt: "Colorful Timkat procession with clergy" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "White celebration attire", alt: "People wearing white clothes for Timkat" },
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Festival gathering", alt: "Large gathering during Timkat celebration" }
-                ],
-                duration: "3 days",
-                scale: "National"
-            },
-            {
-                id: 8,
-                name: "La Tomatina",
-                country: "Spain",
-                continent: "Europe",
-                month: 8,
-                purpose: "Festival where participants playfully throw tomatoes at each other, celebrating abundance and community joy.",
-                history: "La Tomatina began in 1945 in Valencia, Spain, with unclear origins. Some believe it started as a spontaneous act of rebellion, while others suggest it began as a way to celebrate excess tomato harvests. Over decades, it has evolved into the world's largest food fight festival, attracting thousands of participants from around the world.",
-                mainActivities: [
-                    "Throwing tomatoes at each other",
-                    "Creating tomato juice rivers through streets",
-                    "Musical performances and parades",
-                    "Fireworks displays",
-                    "Traditional Spanish food and drinks",
-                    "Nighttime beach celebrations"
-                ],
-                didYouKnow: "La Tomatina uses over 150,000 tomatoes during the festival. The event is so popular that the town of Buñol limits participation to 20,000 people to manage crowds safely.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Tomato throwing festival", alt: "Participants throwing tomatoes at each other" },
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Tomato juice streets", alt: "Streets filled with tomato juice" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Festival fun", alt: "People covered in tomato juice" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Celebrating together", alt: "Festival celebration" }
-                ],
-                duration: "1 day",
-                scale: "International"
-            },
-            {
-                id: 9,
-                name: "Lantern Festival",
-                country: "China",
-                continent: "Asia",
-                month: 2,
-                purpose: "Celebration of the first full moon of the lunar year with lanterns, riddles, and reunion with family.",
-                history: "The Lantern Festival marks the end of Chinese New Year celebrations and originated during the Han Dynasty. It celebrates the coming of spring and the reunion of families. The tradition of displaying lanterns symbolizes the brightness and warmth of the festival, and riddle games on lanterns became a popular form of entertainment during imperial times.",
-                mainActivities: [
-                    "Releasing sky lanterns into the night",
-                    "Displaying elaborate paper lanterns",
-                    "Guessing lantern riddles",
-                    "Eating tangyuan (sweet glutinous rice balls)",
-                    "Lion and dragon dances",
-                    "Fireworks displays"
-                ],
-                didYouKnow: "In Taiwan, the Lantern Festival sees thousands of sky lanterns released, creating a magical display. The tradition of eating tangyuan symbolizes family unity and togetherness.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1582039494576-5146fb764875?w=800", caption: "Sky lanterns lighting the night", alt: "Thousands of glowing sky lanterns in the night sky" },
-                    { url: "https://images.unsplash.com/photo-1549912359-1a2e7a23e6ef?w=800", caption: "Lantern display", alt: "Elaborate paper lantern display" },
-                    { url: "https://images.unsplash.com/photo-1616137466211-f939a420be19?w=800", caption: "Festival celebration", alt: "Lantern Festival celebration" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Community gathering", alt: "People gathering for Lantern Festival" }
-                ],
-                duration: "1 day",
-                scale: "International"
-            },
-            {
-                id: 10,
-                name: "Songkran (Thai New Year)",
-                country: "Thailand",
-                continent: "Asia",
-                month: 4,
-                purpose: "Celebration of Thai New Year with water splashing symbolizing purification and fresh beginnings.",
-                history: "Songkran is the traditional Thai New Year festival, celebrated for over 2,700 years. The water-throwing tradition symbolizes the washing away of bad luck and negativity from the past year, welcoming new beginnings with purification. The festival blends Buddhist traditions, astrological beliefs, and cultural practices that have been preserved through generations.",
-                mainActivities: [
-                    "Playful water splashing and water gun battles",
-                    "Pouring water on Buddha images",
-                    "Preparing traditional Thai dishes",
-                    "Visiting temples for merit-making",
-                    "Applying sticky rice paste on faces",
-                    "Parades with traditional floats"
-                ],
-                didYouKnow: "Songkran is considered the world's largest water festival. In Thailand, it's believed that splashing water cleanses people of misfortune and brings luck and prosperity for the new year.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Water festival celebration", alt: "Water splashing during Songkran" },
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Water bucket fun", alt: "Participants in water bucket game" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Temple blessing", alt: "Buddha statue with water ceremony" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Street celebration", alt: "Street water festival" }
-                ],
-                duration: "3 days",
-                scale: "National"
-            },
-            {
-                id: 11,
-                name: "Bastille Day",
-                country: "France",
-                continent: "Europe",
-                month: 7,
-                purpose: "French national holiday celebrating the storming of the Bastille and the French Revolution with fireworks and parades.",
-                history: "Bastille Day commemorates July 14, 1789, when the Bastille was stormed during the French Revolution, marking the birth of modern democracy in France. The event symbolizes the French people's liberation from monarchy and feudalism. It became the national holiday of France in 1880 and is celebrated as a symbol of French freedom and unity worldwide.",
-                mainActivities: [
-                    "Fireworks displays across major cities",
-                    "Military parades down the Champs-Élysées",
-                    "National flag displays and decorations",
-                    "Street parties and community gatherings",
-                    "Traditional French cuisine and wine",
-                    "Dancing and concerts"
-                ],
-                didYouKnow: "The Bastille Day parade on the Champs-Élysées in Paris is one of the world's largest military parades. The fireworks display at the Eiffel Tower attracts crowds from around the world.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Eiffel Tower fireworks", alt: "Fireworks exploding over the Eiffel Tower" },
-                    { url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800", caption: "Military parade", alt: "Military parade on Champs-Élysées" },
-                    { url: "https://images.unsplash.com/photo-1514640292122-2db0a3f56d14?w=800", caption: "Street celebration", alt: "Bastille Day street party" },
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "French flags and decorations", alt: "French flag decorations" }
-                ],
-                duration: "1 day",
-                scale: "National"
-            },
-            {
-                id: 12,
-                name: "Obon Festival",
-                country: "Japan",
-                continent: "Asia",
-                month: 8,
-                purpose: "Japanese summer festival honoring ancestors with dances, fireworks, and family gatherings during the Obon holiday.",
-                history: "Obon is one of Japan's most important festivals, with roots in ancient Buddhist traditions dating back over 500 years. The festival celebrates the return of ancestral spirits to the living world. Obon blends Buddhist and Shinto practices, making it a deeply spiritual occasion where families gather to honor their deceased relatives and strengthen family bonds.",
-                mainActivities: [
-                    "Bon dances (Bon-odori) in traditional yukata",
-                    "Fireworks displays",
-                    "Preparing special foods for ancestors",
-                    "Visiting family graves",
-                    "Lantern floating on rivers (toro nagashi)",
-                    "Family reunions and gatherings"
-                ],
-                didYouKnow: "During Obon, millions of Japanese travel to their hometowns for family reunions. The lantern floating ceremony is believed to guide ancestral spirits back to the afterlife.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1582039494576-5146fb764875?w=800", caption: "Lantern floating ceremony", alt: "Lanterns floating on water during Obon" },
-                    { url: "https://images.unsplash.com/photo-1618885472179-5e474019fdf0?w=800", caption: "Bon dance performance", alt: "People dancing in traditional yukata" },
-                    { url: "https://images.unsplash.com/photo-1549912359-1a2e7a23e6ef?w=800", caption: "Fireworks festival", alt: "Fireworks during Obon celebration" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Festival gathering", alt: "People gathering during Obon" }
-                ],
-                duration: "3 days",
-                scale: "National"
-            },
-            {
-                id: 13,
-                name: "Vesak (Buddha's Birthday)",
-                country: "Sri Lanka",
-                continent: "Asia",
-                month: 5,
-                purpose: "Buddhist festival celebrating the birth, enlightenment, and death of Gautama Buddha with prayers and celebrations.",
-                history: "Vesak celebrates the life and teachings of Buddha and is one of the most important Buddhist festivals worldwide. It commemorates Buddha's birth, enlightenment, and parinirvana all on the same date in the lunar calendar. Celebrated for over 2,000 years, Vesak emphasizes Buddhist values of compassion, peace, and spiritual enlightenment.",
-                mainActivities: [
-                    "Visiting temples for prayer and meditation",
-                    "Releasing lanterns into the sky",
-                    "Creating colorful lantern displays (Vesak lanterns)",
-                    "Preparing and distributing alms",
-                    "Religious processions",
-                    "Symbolic reenactments of Buddha's life"
-                ],
-                didYouKnow: "Vesak lanterns are traditional paper lanterns hung to commemorate Buddha's enlightenment. In Sri Lanka, Vesak is celebrated with elaborate street decorations and pandals (temporary structures) depicting Buddhist stories.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1582039494576-5146fb764875?w=800", caption: "Vesak lantern display", alt: "Colorful Vesak lanterns decorating the streets" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Temple celebration", alt: "Buddha statue decorated for Vesak" },
-                    { url: "https://images.unsplash.com/photo-1549912359-1a2e7a23e6ef?w=800", caption: "Lantern release", alt: "Sky lanterns floating during Vesak" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Community gathering", alt: "People gathered at temple for Vesak" }
-                ],
-                duration: "1 day",
-                scale: "International"
-            },
-            {
-                id: 14,
-                name: "Ramadan & Eid al-Fitr",
-                country: "Saudi Arabia",
-                continent: "Asia",
-                month: 3,
-                purpose: "Islamic holy month of fasting and prayer, culminating in the joyous Eid celebration with family and community.",
-                history: "Ramadan is the ninth month of the Islamic lunar calendar when Muslims fast from sunrise to sunset. The month commemorates the revelation of the Quran to Prophet Muhammad. Eid al-Fitr, the Festival of Breaking the Fast, celebrates the end of Ramadan and is one of the most important festivals in Islam, celebrated by nearly 2 billion Muslims worldwide.",
-                mainActivities: [
-                    "Daily fasting from dawn to sunset",
-                    "Evening prayers and Quran recitation",
-                    "Sharing meals with family and community",
-                    "Giving to charity (Zakat)",
-                    "Eid prayers and feasts",
-                    "Exchange of greetings and gifts"
-                ],
-                didYouKnow: "Ramadan is believed to be the month when the Quran was first revealed. Eid al-Fitr is celebrated with special prayers, festive meals, new clothes, and acts of charity throughout the Muslim world.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Iftar meal gathering", alt: "Family gathered for Iftar breaking fast" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Evening prayers", alt: "People praying in mosque during Ramadan" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Eid celebration", alt: "Eid festival celebration" },
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Festive gathering", alt: "Family gathering during Eid" }
-                ],
-                duration: "30 days (Ramadan) + 3 days (Eid)",
-                scale: "International"
-            },
-            {
-                id: 15,
-                name: "Baisakhi",
-                country: "India",
-                continent: "Asia",
-                month: 4,
-                purpose: "Punjabi spring festival celebrating the harvest and the founding of the Khalsa in Sikhism.",
-                history: "Baisakhi marks the beginning of the Punjabi solar new year and celebrates the spring harvest. For Sikhs, Baisakhi is particularly significant as it commemorates the founding of the Khalsa by Guru Gobind Singh in 1699. The festival blends agricultural celebration with religious significance, making it a day of joy and spiritual importance in Punjabi culture.",
-                mainActivities: [
-                    "Bhangra dancing",
-                    "Giddha (traditional female dance)",
-                    "Bonfires and celebrations",
-                    "Wearing colorful traditional clothes",
-                    "Feasting on traditional Punjabi food",
-                    "Visiting Sikh temples (Gurudwara)"
-                ],
-                didYouKnow: "Baisakhi is celebrated by Punjabis across India, Pakistan, and the diaspora worldwide. The vibrant Bhangra dance is a highlight, performed in circles with rhythmic hand movements and energetic jumps.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Bhangra dance", alt: "People dancing Bhangra in traditional dress" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Harvest celebration", alt: "Baisakhi harvest festival" },
-                    { url: "https://images.unsplash.com/photo-1549912359-1a2e7a23e6ef?w=800", caption: "Traditional costumes", alt: "People in colorful traditional Punjabi clothes" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Festival gathering", alt: "Community gathering during Baisakhi" }
-                ],
-                duration: "1 day",
-                scale: "Regional"
-            },
-            {
-                id: 16,
-                name: "Carnival (Venice)",
-                country: "Italy",
-                continent: "Europe",
-                month: 2,
-                purpose: "Venetian masquerade festival with elaborate masks and costumes celebrating Venetian culture and history.",
-                history: "The Venice Carnival originated in the 12th century and became famous for its elaborate masks and costumes in the 18th century. The festival was a time when social classes mingled freely due to disguises, making it a unique celebration of freedom and equality. After declining during French and Austrian rule, the Carnival was revived in the 1970s and is now a major international festival.",
-                mainActivities: [
-                    "Wearing elaborate Venetian masks",
-                    "Costume balls and parades",
-                    "Street performances and entertainment",
-                    "Traditional Venetian music",
-                    "Feasting on traditional food",
-                    "Photography and people-watching"
-                ],
-                didYouKnow: "The iconic Venetian masks, such as Volto and Bauta, have distinct meanings and histories. The Carnival attracts over 3 million visitors annually, transforming Venice into a magical masked ball.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Elaborate Venetian masks", alt: "Person wearing ornate Venetian mask" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Costume parade", alt: "Parade of costumed performers" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Masked celebration", alt: "Masked participants celebrating" },
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Street performance", alt: "Street performer in carnival costume" }
-                ],
-                duration: "2 weeks",
-                scale: "International"
-            },
-            {
-                id: 17,
-                name: "Mardi Gras",
-                country: "United States",
-                continent: "Americas",
-                month: 2,
-                purpose: "New Orleans celebration featuring parades, floats, and parties before the Christian Lenten season.",
-                history: "Mardi Gras ('Fat Tuesday') has French origins and was brought to Louisiana by French colonists. The first Mardi Gras in New Orleans was celebrated in 1703. Over centuries, it evolved into a unique American celebration blending French, Spanish, African, and Native American cultures. The modern Mardi Gras festival features elaborate parade floats, throws, and celebrations.",
-                mainActivities: [
-                    "Parade floats with decorations and performers",
-                    "Throwing beads and doubloons to crowds",
-                    "Wearing masks and costumes",
-                    "Live music and jazz performances",
-                    "Traditional New Orleans food (king cake, gumbo)",
-                    "Street parties and celebrations"
-                ],
-                didYouKnow: "Mardi Gras is the largest and most famous street festival in America. Participants throw over 350 tons of beads during the parade season, and the tradition of catching throws has become iconic.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1510812431401-26ff5984c3e5?w=800", caption: "Parade floats", alt: "Elaborate Mardi Gras parade float" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Beads and decorations", alt: "Colorful beads and decorations" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Street celebration", alt: "Crowded street celebration" },
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Live music", alt: "Jazz band performing" }
-                ],
-                duration: "2 weeks",
-                scale: "International"
-            },
-            {
-                id: 18,
-                name: "Thanksgiving",
-                country: "United States",
-                continent: "Americas",
-                month: 11,
-                purpose: "American holiday celebrating gratitude, family gatherings, and harvest traditions.",
-                history: "Thanksgiving has origins in harvest celebrations of early American colonists and Native Americans. The first official Thanksgiving was proclaimed by President Abraham Lincoln in 1863. Over time, it has evolved into America's most celebrated family holiday, observed by Americans regardless of religious affiliation.",
-                mainActivities: [
-                    "Family gatherings and reunions",
-                    "Traditional turkey feast",
-                    "Giving thanks and saying grace",
-                    "Watching football games",
-                    "Preparing traditional dishes (stuffing, pie)",
-                    "Black Friday shopping"
-                ],
-                didYouKnow: "Thanksgiving is the busiest travel period in America. Over 55 million turkeys are consumed during Thanksgiving, and nearly 4 million pumpkin pies are eaten.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1585518419759-59831ba5eace?w=800", caption: "Thanksgiving feast", alt: "Traditional Thanksgiving turkey dinner" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Family gathering", alt: "Family gathered around Thanksgiving table" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Traditional food", alt: "Thanksgiving pumpkin pie" },
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Harvest decorations", alt: "Thanksgiving harvest decorations" }
-                ],
-                duration: "1 day",
-                scale: "National"
-            },
-            {
-                id: 19,
-                name: "Beltane",
-                country: "Scotland",
-                continent: "Europe",
-                month: 5,
-                purpose: "Ancient Celtic fire festival marking the beginning of summer with bonfires and community celebrations.",
-                history: "Beltane is an ancient Celtic festival dating back thousands of years, marking the transition from spring to summer. In Celtic tradition, it was believed to be a time when the boundaries between the living and supernatural worlds blurred. The modern Beltane Fire Festival was revived in 1988 in Edinburgh and has become a popular international celebration of fire, art, and community.",
-                mainActivities: [
-                    "Bonfires and fire performances",
-                    "Fire-eating and juggling",
-                    "Processional parades",
-                    "Costume and body art",
-                    "Live music and dancing",
-                    "Community celebrations"
-                ],
-                didYouKnow: "The Beltane Fire Festival is one of the largest outdoor festivals in Scotland, attracting thousands of participants and performers from around the world.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Fire performance", alt: "Fire performer with flaming torches" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Bonfire celebration", alt: "Large bonfire at Beltane" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Costume parade", alt: "Elaborate costumed parade" },
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Community gathering", alt: "People gathered at Beltane festival" }
-                ],
-                duration: "2 days",
-                scale: "International"
-            },
-            {
-                id: 20,
-                name: "Midsummer Festival",
-                country: "Sweden",
-                continent: "Europe",
-                month: 6,
-                purpose: "Celebration of the summer solstice with bonfires, dancing, and traditional Swedish traditions.",
-                history: "Midsummer is a ancient Swedish celebration tied to the summer solstice and pagan traditions. The festival blends pre-Christian Scandinavian customs with Christian traditions, creating a unique celebration of light and community. Celebrated for centuries, Midsummer is one of Sweden's most important holidays after Christmas.",
-                mainActivities: [
-                    "Raising the maypole and dancing around it",
-                    "Wearing traditional Swedish costumes",
-                    "Bonfires and light celebrations",
-                    "Traditional Swedish food and drink",
-                    "Flower garland decorations",
-                    "Music and dancing"
-                ],
-                didYouKnow: "In Sweden, Midsummer is celebrated with a maypole decorated with flowers and leaves. Swedes believe that Midsummer night has magical properties and traditionally leave out food for good spirits.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800", caption: "Maypole decoration", alt: "Decorated maypole surrounded by people" },
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Traditional dancing", alt: "People dancing around maypole" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Bonfire", alt: "Bonfire celebration during Midsummer" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Festive gathering", alt: "Community gathering at Midsummer" }
-                ],
-                duration: "1 day",
-                scale: "National"
-            },
-            {
-                id: 21,
-                name: "Burning Man",
-                country: "United States",
-                continent: "Americas",
-                month: 9,
-                purpose: "Art festival celebrating self-expression, community, and creativity in the Nevada desert.",
-                history: "Burning Man began in 1986 when a group of friends burned a wooden effigy on a San Francisco beach. The event moved to Nevada's Black Rock Desert in 1990 and has evolved into one of the world's most unique festivals. With over 70,000 participants from around the world, Burning Man represents a temporary city dedicated to art, self-expression, and community.",
-                mainActivities: [
-                    "Art installations and performances",
-                    "Theme camps and community gatherings",
-                    "Burning the Man effigy on Saturday night",
-                    "Burning the Temple (memorial structure)",
-                    "Radical self-expression through costumes",
-                    "Music and electronic performances"
-                ],
-                didYouKnow: "Burning Man creates a temporary city of 70,000+ people in the desert. The festival is based on principles of community, self-expression, and self-reliance, with participants leaving no trace behind.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Art installations", alt: "Large art installations at Burning Man" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "The Man burning", alt: "Burning of the Man structure" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Desert celebration", alt: "Desert festival gathering" },
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Performance art", alt: "Performance artist at Burning Man" }
-                ],
-                duration: "1 week",
-                scale: "International"
-            },
-            {
-                id: 22,
-                name: "Durbar Festival",
-                country: "Nigeria",
-                continent: "Africa",
-                month: 5,
-                purpose: "Nigerian festival celebrating Hausa culture with colorful horse parades and traditional ceremonies.",
-                history: "The Durbar Festival has roots in ancient Hausa kingdoms of northern Nigeria, dating back centuries. The festival celebrates the chiefs and their cultural heritage through elaborate processions. During the Kano or Katsina Durbar, thousands gather to witness traditional Emir processions, displaying centuries-old customs and traditions.",
-                mainActivities: [
-                    "Decorated horse parades with Emirs",
-                    "Traditional Hausa music and drumming",
-                    "Ceremonial processions",
-                    "Vibrant traditional costumes",
-                    "Wrestling competitions",
-                    "Community celebrations"
-                ],
-                didYouKnow: "The Durbar horses are elaborately decorated with expensive fabrics and ornaments. During the Kano Durbar, over 10,000 horses participate in the procession, making it a spectacular sight.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Decorated horses", alt: "Elaborately decorated horse at Durbar parade" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Traditional procession", alt: "Durbar procession with decorated horses" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Ceremonial dress", alt: "Traditional Hausa ceremonial clothing" },
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Community gathering", alt: "Crowd watching Durbar festival" }
-                ],
-                duration: "2 days",
-                scale: "National"
-            },
-            {
-                id: 23,
-                name: "Haru Matsuri (Spring Festival)",
-                country: "Japan",
-                continent: "Asia",
-                month: 3,
-                purpose: "Japanese spring festival celebrating cherry blossoms and renewal with cultural performances.",
-                history: "Haru Matsuri celebrates the arrival of spring in Japan. While springtime festivals occur throughout Japan, the most iconic are the cherry blossom festivals (Sakura Matsuri). These festivals date back centuries and blend Shinto traditions with celebrations of natural beauty. Cherry blossoms symbolize the fleeting nature of life in Japanese culture.",
-                mainActivities: [
-                    "Cherry blossom viewing (hanami)",
-                    "Picnics under blooming trees",
-                    "Traditional music performances",
-                    "Lantern-lit evening celebrations",
-                    "Temple visits and prayers",
-                    "Traditional food stalls"
-                ],
-                didYouKnow: "Hanami (cherry blossom viewing) is a major cultural event in Japan. Families and friends gather under blooming trees for celebrations, and the peak bloom dates are announced nationally.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1522383507177-86626cdcd8ad?w=800", caption: "Cherry blossoms", alt: "Beautiful cherry blossom trees in full bloom" },
-                    { url: "https://images.unsplash.com/photo-1549912359-1a2e7a23e6ef?w=800", caption: "Hanami picnic", alt: "People picnicking under cherry trees" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Festival gathering", alt: "Crowd at cherry blossom festival" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Night illumination", alt: "Cherry blossoms illuminated at night" }
-                ],
-                duration: "2 weeks",
-                scale: "National"
-            },
-            {
-                id: 24,
-                name: "Hermanus Whale Festival",
-                country: "South Africa",
-                continent: "Africa",
-                month: 9,
-                purpose: "South African festival celebrating the arrival of southern right whales with cultural performances.",
-                history: "The Hermanus Whale Festival began in 1991 as a way to celebrate and raise awareness about whale watching in Hermanus, South Africa. The festival coincides with the southern right whale migration season. It has grown into one of South Africa's most popular festivals, combining marine conservation with cultural celebration.",
-                mainActivities: [
-                    "Whale watching and marine viewing",
-                    "Live music and performances",
-                    "Art and craft displays",
-                    "Cultural exhibitions",
-                    "Children's entertainment",
-                    "Food and wine tasting"
-                ],
-                didYouKnow: "The Hermanus Whale Festival attracts around 100,000 visitors annually. Southern right whales can be seen from the shore, making it a unique land-based whale watching experience.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Whale watching", alt: "Southern right whale near shore" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Festival celebration", alt: "Festival crowd and celebrations" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Marine conservation", alt: "Whale and marine life display" },
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Festival entertainment", alt: "Live performance at festival" }
-                ],
-                duration: "3 days",
-                scale: "International"
-            },
-            {
-                id: 25,
-                name: "Fête de la Musique",
-                country: "France",
-                continent: "Europe",
-                month: 6,
-                purpose: "World Music Day celebration promoting free music performances and accessibility in public spaces.",
-                history: "Fête de la Musique (Music Day) was created in 1982 by French authorities to promote music accessibility. Starting as a French initiative, it has grown into a worldwide celebration observed in over 120 countries. The festival encourages both professional and amateur musicians to perform for free in public spaces, democratizing music.",
-                mainActivities: [
-                    "Free concerts and performances",
-                    "Street musicians performing",
-                    "Public park concerts",
-                    "Church and venue performances",
-                    "Classical to electronic music",
-                    "Community celebrations"
-                ],
-                didYouKnow: "Fête de la Musique is celebrated in over 120 countries on June 21st, the summer solstice. In Paris alone, over 4,000 performances occur during the festival.",
-                images: [
-                    { url: "https://images.unsplash.com/photo-1504681869696-d977211a34a4?w=800", caption: "Street performance", alt: "Street musician performing live" },
-                    { url: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800", caption: "Public concert", alt: "Outdoor public concert" },
-                    { url: "https://images.unsplash.com/photo-1599599810694-d6b5e6bbdf62?w=800", caption: "Music celebration", alt: "People enjoying live music" },
-                    { url: "https://images.unsplash.com/photo-1533174072545-7eed0b994e6d?w=800", caption: "Festival gathering", alt: "Fête de la Musique street celebration" }
-                ],
-                duration: "1 day",
-                scale: "International"
-            }
+        const festivals = [
+            {id: 1, name: "Holi", country: "India", continent: "Asia", month: 3, coordinates: [20.5937, 78.9629], image: "https://images.unsplash.com/photo-1577720643272-265e434ff998?w=500&h=400&fit=crop", activities: ["Color throwing", "Bonfire", "Sweets"], significance: "Victory of good over evil"},
+            {id: 2, name: "Diwali", country: "India", continent: "Asia", month: 10, coordinates: [20.5937, 78.9629], image: "https://images.unsplash.com/photo-1599707346992-018e047cabf1?w=500&h=400&fit=crop", activities: ["Lighting diyas", "Fireworks", "Feasting"], significance: "Festival of Lights"},
+            {id: 3, name: "Chinese New Year", country: "China", continent: "Asia", month: 2, coordinates: [35.8617, 104.1954], image: "https://images.unsplash.com/photo-1579833971457-24d1e7a37f60?w=500&h=400&fit=crop", activities: ["Dragon dances", "Fireworks", "Family reunions"], significance: "Lunar New Year celebration"},
+            {id: 4, name: "Songkran", country: "Thailand", continent: "Asia", month: 4, coordinates: [15.8700, 100.9925], image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=500&h=400&fit=crop", activities: ["Water battles", "Temple visits", "Parades"], significance: "Thai New Year"},
+            {id: 5, name: "Tanabata", country: "Japan", continent: "Asia", month: 7, coordinates: [36.2048, 138.2529], image: "https://images.unsplash.com/photo-1522027169507-c4b4f4ee2b04?w=500&h=400&fit=crop", activities: ["Bamboo wishes", "Lanterns", "Dancing"], significance: "Star-crossed lovers festival"},
+            {id: 6, name: "Hajj", country: "Saudi Arabia", continent: "Asia", month: 6, coordinates: [21.4225, 39.8262], image: "https://images.unsplash.com/photo-1573918851895-b50dc4fb3010?w=500&h=400&fit=crop", activities: ["Pilgrimage", "Prayer", "Gathering"], significance: "Islamic holy pilgrimage"},
+            {id: 7, name: "Thaipusam", country: "Malaysia", continent: "Asia", month: 1, coordinates: [3.1390, 101.6869], image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=400&fit=crop", activities: ["Processions", "Body piercing", "Temple visits"], significance: "Hindu devotional festival"},
+            {id: 8, name: "Navaratri", country: "India", continent: "Asia", month: 9, coordinates: [20.5937, 78.9629], image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&h=400&fit=crop", activities: ["Garba dancing", "Fasting", "Rituals"], significance: "Victory of good over evil"},
+            {id: 9, name: "Mid-Autumn Festival", country: "China", continent: "Asia", month: 9, coordinates: [35.8617, 104.1954], image: "https://images.unsplash.com/photo-1549317661-bd32c8e6e770?w=500&h=400&fit=crop", activities: ["Lantern displays", "Moon gazing", "Family gatherings"], significance: "Harvest and reunion celebration"},
+            {id: 10, name: "Raksha Bandhan", country: "India", continent: "Asia", month: 8, coordinates: [20.5937, 78.9629], image: "https://images.unsplash.com/photo-1552456537-bcb305c4b773?w=500&h=400&fit=crop", activities: ["Tying rakhis", "Sweets", "Prayers"], significance: "Brother-sister bond celebration"},
+            {id: 11, name: "Janmashtami", country: "India", continent: "Asia", month: 8, coordinates: [20.5937, 78.9629], image: "https://images.unsplash.com/photo-1605080945090-e221ef2d31aa?w=500&h=400&fit=crop", activities: ["Temple visits", "Butter offerings", "Fasting"], significance: "Birth of Lord Krishna"},
+            {id: 12, name: "Onam", country: "India", continent: "Asia", month: 8, coordinates: [10.8505, 76.2711], image: "https://images.unsplash.com/photo-1517899291350-e3a6f5f25dd6?w=500&h=400&fit=crop", activities: ["Flower rangoli", "Boat races", "Feasting"], significance: "Harvest festival of Kerala"},
+            {id: 13, name: "Gudi Padwa", country: "India", continent: "Asia", month: 3, coordinates: [20.5937, 78.9629], image: "https://images.unsplash.com/photo-1599707346994-2e8ad8b08b4e?w=500&h=400&fit=crop", activities: ["Gudi hoisting", "Traditional dishes", "Gatherings"], significance: "Marathi New Year"},
+            {id: 14, name: "Tet Festival", country: "Vietnam", continent: "Asia", month: 2, coordinates: [14.0583, 108.2772], image: "https://images.unsplash.com/photo-1523821741446-edb429f67505?w=500&h=400&fit=crop", activities: ["Family reunions", "Fireworks", "Traditional foods"], significance: "Vietnamese New Year"},
+            {id: 15, name: "Baisakhi", country: "India", continent: "Asia", month: 4, coordinates: [31.7683, 74.8670], image: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=500&h=400&fit=crop", activities: ["Bonfire", "New clothes", "Traditional dances"], significance: "Harvest and Sikh New Year"},
+            {id: 16, name: "Oktoberfest", country: "Germany", continent: "Europe", month: 9, coordinates: [48.1351, 11.5820], image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=400&fit=crop", activities: ["Beer drinking", "Bavarian food", "Music"], significance: "World's largest beer festival"},
+            {id: 17, name: "Carnival of Venice", country: "Italy", continent: "Europe", month: 2, coordinates: [45.4408, 12.3155], image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&h=400&fit=crop", activities: ["Masquerade balls", "Parades", "Street performances"], significance: "Historic masquerade festival"},
+            {id: 18, name: "Hogmanay", country: "Scotland", continent: "Europe", month: 12, coordinates: [55.9533, -3.1883], image: "https://images.unsplash.com/photo-1478721471782-7c5baa4166c7?w=500&h=400&fit=crop", activities: ["Street parties", "Fireworks", "First footing"], significance: "Scottish New Year celebration"},
+            {id: 19, name: "La Tomatina", country: "Spain", continent: "Europe", month: 8, coordinates: [39.2719, -0.7627], image: "https://images.unsplash.com/photo-1516562141207-8caab60bd798?w=500&h=400&fit=crop", activities: ["Tomato throwing", "Water fights", "Street parties"], significance: "World's largest food fight festival"},
+            {id: 20, name: "Running of the Bulls", country: "Spain", continent: "Europe", month: 7, coordinates: [42.8597, -1.6432], image: "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=500&h=400&fit=crop", activities: ["Bull runs", "Fiestas", "Street celebrations"], significance: "Famous Spanish bull running event"},
+            {id: 21, name: "Celtic Festival", country: "Scotland", continent: "Europe", month: 8, coordinates: [56.0196, -3.1910], image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&h=400&fit=crop", activities: ["Traditional music", "Dance", "Highland games"], significance: "Cultural celebration of Celtic heritage"},
+            {id: 22, name: "Notting Hill Carnival", country: "United Kingdom", continent: "Europe", month: 8, coordinates: [51.5091, -0.2092], image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500&h=400&fit=crop", activities: ["Parades", "Music", "Caribbean food"], significance: "Largest Caribbean street festival in Europe"},
+            {id: 23, name: "Edinburgh Festival", country: "Scotland", continent: "Europe", month: 8, coordinates: [55.9533, -3.1883], image: "https://images.unsplash.com/photo-1460749411175-04bf5292ceea?w=500&h=400&fit=crop", activities: ["Theatre", "Comedy", "Music performances"], significance: "World's largest arts festival"},
+            {id: 24, name: "Durban July", country: "South Africa", continent: "Africa", month: 7, coordinates: [-29.8587, 31.0292], image: "https://images.unsplash.com/photo-1479142506370-56aeb00c5d14?w=500&h=400&fit=crop", activities: ["Horse racing", "Fashion", "Socializing"], significance: "South Africa's most famous horse racing event"},
+            {id: 25, name: "Festival au Désert", country: "Mali", continent: "Africa", month: 1, coordinates: [16.2565, -3.0056], image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=400&fit=crop", activities: ["Music", "Tuareg culture", "Traditional dance"], significance: "Celebration of Tuareg culture and music"},
+            {id: 26, name: "Zanzibar Film Festival", country: "Tanzania", continent: "Africa", month: 7, coordinates: [-6.1667, 39.1667], image: "https://images.unsplash.com/photo-1489749798305-4fea3ba63d60?w=500&h=400&fit=crop", activities: ["Film screenings", "Discussions", "Cultural events"], significance: "African and world cinema celebration"},
+            {id: 27, name: "Cape Town Festival", country: "South Africa", continent: "Africa", month: 3, coordinates: [-33.9249, 18.4241], image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=400&fit=crop", activities: ["Music", "Street art", "Cultural performances"], significance: "Multi-genre festival celebrating Cape Town culture"},
+            {id: 28, name: "Abodje Festival", country: "Benin", continent: "Africa", month: 6, coordinates: [6.4969, 2.6289], image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&h=400&fit=crop", activities: ["Traditional rituals", "Dance", "Music"], significance: "Celebration of Yoruba royalty and culture"},
+            {id: 29, name: "Gerewol Festival", country: "Niger", continent: "Africa", month: 9, coordinates: [16.6369, 5.5197], image: "https://images.unsplash.com/photo-1504126613408-eca07ce68773?w=500&h=400&fit=crop", activities: ["Male beauty contest", "Dance", "Courtship rituals"], significance: "Fulani ethnic celebration and gathering"},
+            {id: 30, name: "Timkat Festival", country: "Ethiopia", continent: "Africa", month: 1, coordinates: [9.0320, 38.7469], image: "https://images.unsplash.com/photo-1525763185298-1b434c919eba?w=500&h=400&fit=crop", activities: ["Religious processions", "Baptism reenactment", "Prayers"], significance: "Epiphany celebration and religious observance"},
+            {id: 31, name: "Carnival Rio", country: "Brazil", continent: "Americas", month: 2, coordinates: [-22.9068, -43.1729], image: "https://images.unsplash.com/photo-1579727899923-5c2e9b5e9797?w=500&h=400&fit=crop", activities: ["Samba dancing", "Costumes", "Parades"], significance: "World's largest carnival celebration"},
+            {id: 32, name: "Mardi Gras", country: "USA", continent: "Americas", month: 2, coordinates: [29.9511, -90.2623], image: "https://images.unsplash.com/photo-1514306688737-6ad76b1991c5?w=500&h=400&fit=crop", activities: ["Parades", "Masquerade", "Street parties"], significance: "New Orleans carnival celebration"},
+            {id: 33, name: "Day of Dead", country: "Mexico", continent: "Americas", month: 11, coordinates: [19.4326, -99.1332], image: "https://images.unsplash.com/photo-1489749798305-4fea3ba63d60?w=500&h=400&fit=crop", activities: ["Altar building", "Cemetery visits", "Feasting"], significance: "Remembrance of deceased loved ones"},
+            {id: 34, name: "Burning Man", country: "USA", continent: "Americas", month: 8, coordinates: [40.7842, -119.0881], image: "https://images.unsplash.com/photo-1498855926480-d98e83099315?w=500&h=400&fit=crop", activities: ["Art installations", "Music", "Community building"], significance: "Large-scale participatory art festival"},
+            {id: 35, name: "Coachella", country: "USA", continent: "Americas", month: 4, coordinates: [33.6837, -116.2413], image: "https://images.unsplash.com/photo-1519671482677-5a0b5acd2172?w=500&h=400&fit=crop", activities: ["Music performances", "Art", "Fashion"], significance: "Major music and arts festival"},
+            {id: 36, name: "South by Southwest", country: "USA", continent: "Americas", month: 3, coordinates: [30.2672, -97.7431], image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=400&fit=crop", activities: ["Music", "Film", "Interactive media"], significance: "Film, interactive media and music conference and festival"},
+            {id: 37, name: "Las Fiestas Patrias", country: "Chile", continent: "Americas", month: 9, coordinates: [-33.8688, -51.2159], image: "https://images.unsplash.com/photo-1516627145497-ae6968895b2e?w=500&h=400&fit=crop", activities: ["Traditional dances", "Food", "Military parades"], significance: "Chilean Independence Day celebration"},
+            {id: 38, name: "Carnival Barranquilla", country: "Colombia", continent: "Americas", month: 2, coordinates: [10.9639, -74.7964], image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=500&h=400&fit=crop", activities: ["Street dances", "Music", "Costumes"], significance: "One of world's largest carnivals"},
+            {id: 39, name: "Inti Raymi", country: "Peru", continent: "Americas", month: 6, coordinates: [-13.1939, -72.5460], image: "https://images.unsplash.com/photo-1517457373614-b7152f800fd1?w=500&h=400&fit=crop", activities: ["Historical reenactment", "Rituals", "Music and dance"], significance: "Ancient Incan sun festival"},
+            {id: 40, name: "Australia Day", country: "Australia", continent: "Oceania", month: 1, coordinates: [-25.2744, 133.7751], image: "https://images.unsplash.com/photo-1489749798305-4fea3ba63d52?w=500&h=400&fit=crop", activities: ["Barbecues", "Fireworks", "Concerts"], significance: "Australian National Day celebration"},
+            {id: 41, name: "Vivid Sydney", country: "Australia", continent: "Oceania", month: 5, coordinates: [-33.8568, 151.2153], image: "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=500&h=400&fit=crop", activities: ["Light installations", "Music", "Art exhibitions"], significance: "World's largest light festival"},
+            {id: 42, name: "Maori Festival", country: "New Zealand", continent: "Oceania", month: 2, coordinates: [-41.2865, 174.7762], image: "https://images.unsplash.com/photo-1493515172519-5e4e6373ae0e?w=500&h=400&fit=crop", activities: ["Cultural performances", "Haka", "Traditional food"], significance: "Celebration of Maori culture and heritage"},
+            {id: 43, name: "Festival Islands Fiji", country: "Fiji", continent: "Oceania", month: 8, coordinates: [-17.7134, 178.0650], image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=400&fit=crop", activities: ["Traditional music", "Dance", "Crafts"], significance: "Celebration of Fijian culture"},
+            {id: 44, name: "Surfing Championships", country: "Australia", continent: "Oceania", month: 3, coordinates: [-28.6597, 153.5507], image: "https://images.unsplash.com/photo-1505228395891-9a51e7e86e81?w=500&h=400&fit=crop", activities: ["Surfing competitions", "Beach culture", "Exhibitions"], significance: "Major international surfing event"},
+            {id: 45, name: "Polynesian Festival", country: "Samoa", continent: "Oceania", month: 7, coordinates: [-13.6176, -172.1052], image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=500&h=400&fit=crop", activities: ["Traditional dances", "Sports", "Cultural displays"], significance: "Annual celebration of Polynesian cultures"},
+            {id: 46, name: "Haro Wine Festival", country: "Spain", continent: "Europe", month: 6, coordinates: [42.2758, -2.8157], image: "https://images.unsplash.com/photo-1514306688737-6ad76b1991c5?w=500&h=400&fit=crop", activities: ["Wine spraying", "Parades", "Dancing"], significance: "Spanish wine festival celebration"},
+            {id: 47, name: "Pushkar Camel Fair", country: "India", continent: "Asia", month: 10, coordinates: [26.4923, 74.5505], image: "https://images.unsplash.com/photo-1549317661-bd32c8e6e770?w=500&h=400&fit=crop", activities: ["Camel trading", "Religious rituals", "Folk performances"], significance: "Annual Hindu pilgrimage and camel fair"},
+            {id: 48, name: "Harbin Ice Festival", country: "China", continent: "Asia", month: 1, coordinates: [45.8038, 126.5340], image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&h=400&fit=crop", activities: ["Ice sculptures", "Winter sports", "Performances"], significance: "Spectacular ice and snow art festival"},
+            {id: 49, name: "Biennale Venice", country: "Italy", continent: "Europe", month: 5, coordinates: [45.4408, 12.3155], image: "https://images.unsplash.com/photo-1578905455847-267181db3fcd?w=500&h=400&fit=crop", activities: ["Art exhibitions", "Performances", "Installations"], significance: "International contemporary art exhibition"},
+            {id: 50, name: "Cannes Film Festival", country: "France", continent: "Europe", month: 5, coordinates: [43.5528, 7.0176], image: "https://images.unsplash.com/photo-1489749798305-4fea3ba63d60?w=500&h=400&fit=crop", activities: ["Film screenings", "Red carpet events", "Networking"], significance: "One of the most prestigious film festivals"}
         ];
 
-        // State Management
-        let currentFestivals = [...festivalsData];
-        let selectedContinent = null;
-        let selectedMonth = 0;
-        let searchQuery = '';
-        let currentDetailFestival = null;
-        let galleryIndex = 0;
-        let galleryAutoplay = null;
+        // Global state
+        let currentPage = 1;
+        const festivalsPerPage = 9;
+        let filteredFestivals = [...festivals];
+        let map = null;
+        let markers = null;
+        let currentFestival = null;
+        let favorites = [];
+        let planner = [];
+        let newsletterShown = false;
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        // Category icons mapping
+        const categoryIcons = {
+            "Religion & Spirituality": "fa-om",
+            "Music & Arts": "fa-music",
+            "Food & Harvest": "fa-leaf",
+            "Traditional & Cultural": "fa-landmark",
+            "Adventure & Sports": "fa-person-running",
+            "Film & Theater": "fa-film",
+            "Technology & Innovation": "fa-microchip"
+        };
 
-        // Month Names
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeMap();
-            initializeFilters();
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFeaturedFestivals();
+            initializeGallery();
             initializeTimeline();
-            renderFestivals();
-            initializeModal();
-            initializeKeyboardNavigation();
+            initializeCompareSelects();
+            
+            // Add enter key support for search
+            document.getElementById('globalSearch').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            // Back to top button
+            window.addEventListener('scroll', function() {
+                const backToTop = document.getElementById('backToTop');
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('show');
+                } else {
+                    backToTop.classList.remove('show');
+                }
+            });
+
+            // Show newsletter modal after 10 seconds
+            setTimeout(function() {
+                if (!newsletterShown) {
+                    showNewsletterModal();
+                }
+            }, 10000);
         });
 
-        // Map Functionality
-        function initializeMap() {
-            const continents = document.querySelectorAll('.continent');
-            
-            continents.forEach(continent => {
-                // Click handler
-                continent.addEventListener('click', () => {
-                    handleContinentSelect(continent);
-                });
-
-                // Keyboard handler
-                continent.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleContinentSelect(continent);
-                    }
-                });
+        // Back to top function
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         }
 
-        function handleContinentSelect(continentElement) {
-            const continent = continentElement.dataset.continent;
-            const allContinents = document.querySelectorAll('.continent');
+        // Page Navigation
+        function showPage(pageName) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
             
-            // Toggle selection
-            if (selectedContinent === continent) {
-                selectedContinent = null;
-                allContinents.forEach(c => c.classList.remove('active'));
-                announceToScreenReader('Filter cleared. Showing all festivals.');
-            } else {
-                selectedContinent = continent;
-                allContinents.forEach(c => c.classList.remove('active'));
-                continentElement.classList.add('active');
-                const count = festivalsData.filter(f => f.continent === continent).length;
-                announceToScreenReader(`Filtering by ${continent}. ${count} festivals found.`);
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            if (pageName === 'home') {
+                document.getElementById('home').classList.add('active');
+                navLinks[0].classList.add('active');
+            } else if (pageName === 'gallery') {
+                document.getElementById('gallery').classList.add('active');
+                navLinks[1].classList.add('active');
+                renderGallery();
+            } else if (pageName === 'timeline') {
+                document.getElementById('timeline').classList.add('active');
+                navLinks[2].classList.add('active');
+            } else if (pageName === 'map') {
+                document.getElementById('map-page').classList.add('active');
+                navLinks[3].classList.add('active');
+                setTimeout(() => initializeMap(), 100);
+            } else if (pageName === 'compare') {
+                document.getElementById('compare').classList.add('active');
+                navLinks[4].classList.add('active');
+            } else if (pageName === 'favorites') {
+                document.getElementById('favorites').classList.add('active');
+                navLinks[5].classList.add('active');
+                renderFavorites();
+            } else if (pageName === 'planner') {
+                document.getElementById('planner').classList.add('active');
+                navLinks[6].classList.add('active');
+                renderPlanner();
             }
             
-            filterFestivals();
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        // Filters Functionality
-        function initializeFilters() {
-            const searchInput = document.getElementById('search-input');
-            const monthSlider = document.getElementById('month-slider');
-            const clearButton = document.getElementById('clear-filters');
-
-            // Search with debouncing
-            let searchTimeout;
-            searchInput.addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    searchQuery = e.target.value.toLowerCase();
-                    filterFestivals();
-                }, 300);
-            });
-
-            // Month slider
-            monthSlider.addEventListener('input', (e) => {
-                selectedMonth = parseInt(e.target.value);
-                const monthLabel = document.getElementById('month-label');
-                monthLabel.textContent = selectedMonth === 0 ? 'All Months' : monthNames[selectedMonth - 1];
-                monthSlider.setAttribute('aria-valuenow', selectedMonth);
-                filterFestivals();
-            });
-
-            // Clear filters
-            clearButton.addEventListener('click', () => {
-                searchInput.value = '';
-                monthSlider.value = 0;
-                searchQuery = '';
-                selectedMonth = 0;
-                selectedContinent = null;
-                document.getElementById('month-label').textContent = 'All Months';
-                document.querySelectorAll('.continent').forEach(c => c.classList.remove('active'));
-                filterFestivals();
-                announceToScreenReader('All filters cleared.');
-            });
+        // Featured Festivals
+        function initializeFeaturedFestivals() {
+            const featuredContainer = document.getElementById('featuredFestivals');
+            const featured = [festivals[0], festivals[15], festivals[30], festivals[40]];
+            featuredContainer.innerHTML = featured.map(festival => createFestivalCard(festival)).join('');
         }
 
-        // Filter Logic
-        function filterFestivals() {
-            currentFestivals = festivalsData.filter(festival => {
-                const matchesContinent = !selectedContinent || festival.continent === selectedContinent;
-                const matchesMonth = selectedMonth === 0 || festival.month === selectedMonth;
-                const matchesSearch = !searchQuery || 
-                    festival.name.toLowerCase().includes(searchQuery) ||
-                    festival.country.toLowerCase().includes(searchQuery);
-                
-                return matchesContinent && matchesMonth && matchesSearch;
-            });
-
-            renderFestivals();
-            announceResultsCount();
-        }
-
-        // Render Festival Grid
-        function renderFestivals() {
-            const grid = document.getElementById('festival-grid');
-            const noResults = document.getElementById('no-results');
-
-            if (currentFestivals.length === 0) {
-                grid.innerHTML = '';
-                noResults.style.display = 'block';
-                return;
-            }
-
-            noResults.style.display = 'none';
-            grid.innerHTML = currentFestivals.map((festival, index) => `
-                <article class="festival-card" role="listitem" tabindex="0" 
-                    data-festival-id="${festival.id}"
-                    aria-label="${festival.name} festival in ${festival.country}"
-                    style="animation-delay: ${index * 0.1}s">
-                    <img src="${festival.images[0].url}" 
-                         alt="${festival.images[0].alt}" 
-                         class="festival-card-image" 
-                         loading="lazy" />
-                    <div class="festival-card-content">
-                        <h3 class="festival-card-title">${festival.name}</h3>
-                        <div class="festival-card-meta">
-                            <span aria-label="Country">📍 ${festival.country}</span>
-                            <span aria-label="Month">📅 ${monthNames[festival.month - 1]}</span>
+        // Festival Card with enhanced features
+        function createFestivalCard(festival) {
+            const isFavorite = favorites.includes(festival.id);
+            const isPlanned = planner.includes(festival.id);
+            const categoryIcon = categoryIcons[festival.category] || 'fa-star';
+            
+            return `
+                <div class="festival-card" style="position: relative;">
+                    <div style="position: relative;">
+                        <img src="${festival.image}" alt="${festival.name}" class="festival-image" onerror="this.src='https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=500&h=400&fit=crop'" onclick="showFestivalDetail(${festival.id})">
+                        <div class="category-badge">
+                            <i class="fas ${categoryIcon}"></i> ${festival.category}
+                        </div>
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(event, ${festival.id})">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="festival-content" onclick="showFestivalDetail(${festival.id})">
+                        <h3 class="festival-name">${festival.name}</h3>
+                        <div class="festival-location">
+                            <i class="fas fa-map-marker-alt"></i> ${festival.country}
+                        </div>
+                        <div>
+                            <span class="festival-month"><i class="fas fa-calendar"></i> ${monthNames[festival.month - 1]}</span>
+                            <span class="continent-badge continent-${festival.continent.toLowerCase()}">${festival.continent}</span>
+                        </div>
+                        <p class="festival-description">${festival.significance}</p>
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary" style="flex: 1; padding: 0.5rem; font-size: 0.85rem;" onclick="event.stopPropagation(); ${isPlanned ? 'removeFromPlanner' : 'addToPlanner'}(${festival.id})">
+                                <i class="fas ${isPlanned ? 'fa-check' : 'fa-plus'}"></i> ${isPlanned ? 'Planned' : 'Plan'}
+                            </button>
                         </div>
                     </div>
-                    <div class="festival-card-overlay">
-                        <p class="overlay-purpose">${festival.purpose}</p>
-                        <div class="overlay-activities">
-                            <strong>Main Activities:</strong>
-                            <ul>
-                                ${festival.mainActivities.slice(0, 3).map(activity => `<li>${activity}</li>`).join('')}
-                            </ul>
-                        </div>
-                        <button class="btn btn-primary" aria-label="View details for ${festival.name}">Learn More</button>
-                    </div>
-                </article>
-            `).join('');
-
-            // Add click handlers
-            document.querySelectorAll('.festival-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const festivalId = parseInt(card.dataset.festivalId);
-                    openDetailModal(festivalId);
-                });
-
-                card.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        const festivalId = parseInt(card.dataset.festivalId);
-                        openDetailModal(festivalId);
-                    }
-                });
-            });
-        }
-
-        // Timeline Functionality
-        function initializeTimeline() {
-            const timelineMonths = document.querySelector('.timeline-months');
-            
-            // Create month markers
-            for (let i = 1; i <= 12; i++) {
-                const festivalCount = festivalsData.filter(f => f.month === i).length;
-                const monthDiv = document.createElement('div');
-                monthDiv.className = 'timeline-month';
-                monthDiv.setAttribute('tabindex', '0');
-                monthDiv.setAttribute('role', 'button');
-                monthDiv.setAttribute('aria-label', `${monthNames[i-1]} - ${festivalCount} festivals`);
-                monthDiv.dataset.month = i;
-                
-                monthDiv.innerHTML = `
-                    <div class="month-dot" aria-hidden="true">${festivalCount}</div>
-                    <div class="month-label">${monthNames[i-1]}</div>
-                `;
-
-                monthDiv.addEventListener('click', () => handleMonthClick(i));
-                monthDiv.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleMonthClick(i);
-                    }
-                });
-
-                timelineMonths.appendChild(monthDiv);
-            }
-        }
-
-        function handleMonthClick(month) {
-            const container = document.getElementById('month-festivals-container');
-            const existingMonth = document.querySelector('.month-festivals.active');
-            const monthElements = document.querySelectorAll('.timeline-month');
-            
-            // Toggle if clicking same month
-            if (existingMonth && existingMonth.dataset.month == month) {
-                existingMonth.remove();
-                monthElements.forEach(m => m.classList.remove('active'));
-                announceToScreenReader('Month details closed.');
-                return;
-            }
-
-            // Remove existing
-            if (existingMonth) existingMonth.remove();
-            monthElements.forEach(m => m.classList.remove('active'));
-
-            // Add active state
-            const activeMonth = document.querySelector(`[data-month="${month}"]`);
-            activeMonth.classList.add('active');
-
-            // Get festivals for this month
-            const monthFestivals = festivalsData.filter(f => f.month === month);
-            
-            const monthDiv = document.createElement('div');
-            monthDiv.className = 'month-festivals active';
-            monthDiv.dataset.month = month;
-            monthDiv.innerHTML = `
-                <h3>${monthNames[month - 1]} Festivals (${monthFestivals.length})</h3>
-                <div class="month-festivals-grid">
-                    ${monthFestivals.map(festival => `
-                        <div class="month-festival-item" tabindex="0" 
-                             data-festival-id="${festival.id}"
-                             role="button"
-                             aria-label="${festival.name} in ${festival.country}">
-                            <h4>${festival.name}</h4>
-                            <p>${festival.country}</p>
-                        </div>
-                    `).join('')}
                 </div>
             `;
-
-            container.appendChild(monthDiv);
-
-            // Add click handlers
-            monthDiv.querySelectorAll('.month-festival-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const festivalId = parseInt(item.dataset.festivalId);
-                    openDetailModal(festivalId);
-                });
-
-                item.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        const festivalId = parseInt(item.dataset.festivalId);
-                        openDetailModal(festivalId);
-                    }
-                });
-            });
-
-            announceToScreenReader(`${monthNames[month - 1]} festivals displayed. ${monthFestivals.length} festivals found.`);
         }
 
-        // Detail Modal
-        function initializeModal() {
-            const modal = document.getElementById('detail-modal');
-            const closeBtn = document.getElementById('close-modal');
-
-            closeBtn.addEventListener('click', closeDetailModal);
-
-            // Close on escape
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && modal.classList.contains('active')) {
-                    closeDetailModal();
-                }
-            });
-
-            // Close on backdrop click
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeDetailModal();
-                }
-            });
-        }
-
-        function openDetailModal(festivalId) {
-            const festival = festivalsData.find(f => f.id === festivalId);
-            if (!festival) return;
-
-            currentDetailFestival = festival;
-            galleryIndex = 0;
-
-            const modal = document.getElementById('detail-modal');
-            const modalContent = document.getElementById('modal-content');
-
-            modalContent.innerHTML = `
-                <header class="detail-header">
-                    <h2 id="detail-modal-title" class="detail-title">${festival.name}</h2>
-                    <div class="detail-meta">
-                        <div class="detail-meta-item">
-                            <strong>Country:</strong> ${festival.country}
-                        </div>
-                        <div class="detail-meta-item">
-                            <strong>Continent:</strong> ${festival.continent}
-                        </div>
-                        <div class="detail-meta-item">
-                            <strong>Month:</strong> ${monthNames[festival.month - 1]}
-                        </div>
-                        <div class="detail-meta-item">
-                            <strong>Duration:</strong> ${festival.duration}
-                        </div>
-                        <div class="detail-meta-item">
-                            <strong>Scale:</strong> ${festival.scale}
-                        </div>
-                    </div>
-                </header>
-
-                <section class="gallery" aria-label="Festival photo gallery">
-                    <div class="gallery-main">
-                        ${festival.images.map((img, index) => `
-                            <img src="${img.url}" 
-                                 alt="${img.alt}" 
-                                 class="gallery-image ${index === 0 ? 'active' : ''}" 
-                                 data-index="${index}" />
-                        `).join('')}
-                        <div class="gallery-caption" id="gallery-caption">
-                            ${festival.images[0].caption}
-                        </div>
-                        <div class="gallery-controls">
-                            <button class="gallery-btn" id="gallery-prev" aria-label="Previous image">‹</button>
-                            <button class="gallery-btn" id="gallery-next" aria-label="Next image">›</button>
-                        </div>
-                    </div>
-                    <div class="gallery-thumbnails" role="list" aria-label="Gallery thumbnails">
-                        ${festival.images.map((img, index) => `
-                            <img src="${img.url}" 
-                                 alt="Thumbnail ${index + 1}" 
-                                 class="gallery-thumb ${index === 0 ? 'active' : ''}" 
-                                 data-index="${index}"
-                                 tabindex="0"
-                                 role="button"
-                                 aria-label="View image ${index + 1}: ${img.caption}" />
-                        `).join('')}
-                    </div>
-                </section>
-
-                <section class="detail-section">
-                    <h3>History</h3>
-                    <p>${festival.history}</p>
-                </section>
-
-                <section class="detail-section">
-                    <h3>Main Activities</h3>
-                    <ul class="activities-list">
-                        ${festival.mainActivities.map(activity => `<li>${activity}</li>`).join('')}
-                    </ul>
-                </section>
-
-                <section class="detail-section">
-                    <div class="did-you-know">
-                        <strong>Did You Know?</strong>
-                        ${festival.didYouKnow}
-                    </div>
-                </section>
-            `;
-
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            // Initialize gallery
-            initializeGallery();
-
-            // Focus management
-            setTimeout(() => {
-                document.getElementById('close-modal').focus();
-            }, 100);
-
-            announceToScreenReader(`Viewing details for ${festival.name}`);
-        }
-
-        function closeDetailModal() {
-            const modal = document.getElementById('detail-modal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            if (galleryAutoplay) {
-                clearInterval(galleryAutoplay);
-            }
-
-            announceToScreenReader('Festival details closed.');
-        }
-
-        // Gallery Functionality
+        // Gallery
         function initializeGallery() {
-            const prevBtn = document.getElementById('gallery-prev');
-            const nextBtn = document.getElementById('gallery-next');
-            const thumbnails = document.querySelectorAll('.gallery-thumb');
-
-            prevBtn.addEventListener('click', () => changeGalleryImage(-1));
-            nextBtn.addEventListener('click', () => changeGalleryImage(1));
-
-            thumbnails.forEach(thumb => {
-                thumb.addEventListener('click', () => {
-                    const index = parseInt(thumb.dataset.index);
-                    setGalleryImage(index);
-                });
-
-                thumb.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        const index = parseInt(thumb.dataset.index);
-                        setGalleryImage(index);
-                    }
-                });
-            });
-
-            // Keyboard navigation
-            document.addEventListener('keydown', handleGalleryKeyboard);
-
-            // Auto-play (pause on hover)
-            const galleryMain = document.querySelector('.gallery-main');
-            startGalleryAutoplay();
-
-            galleryMain.addEventListener('mouseenter', () => {
-                if (galleryAutoplay) clearInterval(galleryAutoplay);
-            });
-
-            galleryMain.addEventListener('mouseleave', startGalleryAutoplay);
+            filteredFestivals = [...festivals];
+            currentPage = 1;
+            renderGallery();
         }
 
-        function handleGalleryKeyboard(e) {
-            if (!document.getElementById('detail-modal').classList.contains('active')) return;
+        function applyFilters() {
+            const continent = document.getElementById('continentFilter').value;
+            const month = document.getElementById('monthFilter').value;
+            
+            filteredFestivals = festivals.filter(festival => {
+                const continentMatch = continent === 'all' || festival.continent === continent;
+                const monthMatch = month === 'all' || festival.month === parseInt(month);
+                return continentMatch && monthMatch;
+            });
+            
+            currentPage = 1;
+            renderGallery();
+        }
 
-            if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                changeGalleryImage(-1);
-            } else if (e.key === 'ArrowRight') {
-                e.preventDefault();
-                changeGalleryImage(1);
+        function renderGallery() {
+            const container = document.getElementById('galleryFestivals');
+            const startIdx = (currentPage - 1) * festivalsPerPage;
+            const endIdx = startIdx + festivalsPerPage;
+            const pageFestivals = filteredFestivals.slice(startIdx, endIdx);
+            
+            container.innerHTML = pageFestivals.map(festival => createFestivalCard(festival)).join('');
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredFestivals.length / festivalsPerPage);
+            const container = document.getElementById('pagination');
+            
+            let html = `
+                <button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    &laquo; Previous
+                </button>
+            `;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                    <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            html += `
+                <button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    Next &raquo;
+                </button>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredFestivals.length / festivalsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderGallery();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // Timeline
+        function initializeTimeline() {
+            const container = document.getElementById('timelineContent');
+            const festivalsByMonth = {};
+            
+            for (let i = 1; i <= 12; i++) {
+                festivalsByMonth[i] = festivals.filter(f => f.month === i);
+            }
+            
+            let html = '';
+            for (let month = 1; month <= 12; month++) {
+                const monthFestivals = festivalsByMonth[month];
+                if (monthFestivals.length > 0) {
+                    html += `
+                        <div class="timeline-month">
+                            <h3 class="month-header">${monthNames[month - 1]}</h3>
+                            <div class="timeline-items">
+                                ${monthFestivals.map(festival => `
+                                    <div class="timeline-item" onclick="showFestivalDetail(${festival.id})">
+                                        <div class="timeline-item-name">${festival.name}</div>
+                                        <div class="timeline-item-location">${festival.country}, ${festival.continent}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Map
+        function initializeMap() {
+            if (map) {
+                map.remove();
+            }
+            
+            map = L.map('map').setView([20, 0], 2);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(map);
+            
+            markers = L.markerClusterGroup();
+            
+            festivals.forEach(festival => {
+                const marker = L.marker(festival.coordinates)
+                    .bindPopup(`
+                        <div class="popup-content">
+                            <h4>${festival.name}</h4>
+                            <p>${festival.country}</p>
+                            <p>${monthNames[festival.month - 1]}</p>
+                            <button class="popup-btn" onclick="showFestivalDetail(${festival.id})">View Details</button>
+                        </div>
+                    `);
+                marker.festivalData = festival;
+                markers.addLayer(marker);
+            });
+            
+            map.addLayer(markers);
+        }
+
+        function filterMapMarkers() {
+            const continent = document.getElementById('mapContinentFilter').value;
+            
+            markers.clearLayers();
+            
+            const filtered = continent === 'all' 
+                ? festivals 
+                : festivals.filter(f => f.continent === continent);
+            
+            filtered.forEach(festival => {
+                const marker = L.marker(festival.coordinates)
+                    .bindPopup(`
+                        <div class="popup-content">
+                            <h4>${festival.name}</h4>
+                            <p>${festival.country}</p>
+                            <p>${monthNames[festival.month - 1]}</p>
+                            <button class="popup-btn" onclick="showFestivalDetail(${festival.id})">View Details</button>
+                        </div>
+                    `);
+                marker.festivalData = festival;
+                markers.addLayer(marker);
+            });
+        }
+
+        // Search
+        function performSearch() {
+            const searchTerm = document.getElementById('globalSearch').value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                alert('Please enter a search term');
+                return;
+            }
+            
+            const results = festivals.filter(festival => {
+                return festival.name.toLowerCase().includes(searchTerm) ||
+                       festival.country.toLowerCase().includes(searchTerm) ||
+                       monthNames[festival.month - 1].toLowerCase().includes(searchTerm) ||
+                       festival.continent.toLowerCase().includes(searchTerm);
+            });
+            
+            displaySearchResults(results, searchTerm);
+        }
+
+        function displaySearchResults(results, searchTerm) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById('search-results').classList.add('active');
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            document.getElementById('searchTerm').textContent = searchTerm;
+            const container = document.getElementById('searchResultsGrid');
+            
+            if (results.length === 0) {
+                container.innerHTML = '<div class="no-results">No festivals found matching your search.</div>';
+            } else {
+                container.innerHTML = results.map(festival => createFestivalCard(festival)).join('');
             }
         }
 
-        function changeGalleryImage(direction) {
-            if (!currentDetailFestival) return;
+        // Festival Detail Modal
+        function showFestivalDetail(festivalId) {
+            const festival = festivals.find(f => f.id === festivalId);
+            if (!festival) return;
             
-            galleryIndex += direction;
-            if (galleryIndex < 0) galleryIndex = currentDetailFestival.images.length - 1;
-            if (galleryIndex >= currentDetailFestival.images.length) galleryIndex = 0;
+            currentFestival = festival;
             
-            setGalleryImage(galleryIndex);
+            document.getElementById('modalImage').src = festival.image;
+            document.getElementById('modalTitle').textContent = festival.name;
+            document.getElementById('modalCountry').textContent = festival.country;
+            document.getElementById('modalContinent').textContent = festival.continent;
+            document.getElementById('modalMonth').textContent = monthNames[festival.month - 1];
+            document.getElementById('modalCoordinates').textContent = `${festival.coordinates[0].toFixed(4)}, ${festival.coordinates[1].toFixed(4)}`;
+            document.getElementById('modalSignificance').textContent = festival.significance;
+            
+            const activitiesHtml = festival.activities.map(activity => 
+                `<span class="activity-tag">${activity}</span>`
+            ).join('');
+            document.getElementById('modalActivities').innerHTML = activitiesHtml;
+            
+            document.getElementById('festivalModal').classList.add('active');
         }
 
-        function setGalleryImage(index) {
-            if (!currentDetailFestival) return;
-            
-            galleryIndex = index;
-            const images = document.querySelectorAll('.gallery-image');
-            const thumbs = document.querySelectorAll('.gallery-thumb');
-            const caption = document.getElementById('gallery-caption');
-
-            images.forEach((img, i) => {
-                img.classList.toggle('active', i === index);
-            });
-
-            thumbs.forEach((thumb, i) => {
-                thumb.classList.toggle('active', i === index);
-            });
-
-            caption.textContent = currentDetailFestival.images[index].caption;
+        function closeModal() {
+            document.getElementById('festivalModal').classList.remove('active');
         }
 
-        function startGalleryAutoplay() {
-            if (galleryAutoplay) clearInterval(galleryAutoplay);
-            
-            galleryAutoplay = setInterval(() => {
-                changeGalleryImage(1);
-            }, 4000);
-        }
-
-        // Keyboard Navigation
-        function initializeKeyboardNavigation() {
-            // Tab trap in modal
-            const modal = document.getElementById('detail-modal');
-            
-            modal.addEventListener('keydown', (e) => {
-                if (!modal.classList.contains('active')) return;
-                
-                if (e.key === 'Tab') {
-                    const focusableElements = modal.querySelectorAll(
-                        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-                    );
-                    const firstElement = focusableElements[0];
-                    const lastElement = focusableElements[focusableElements.length - 1];
-
-                    if (e.shiftKey && document.activeElement === firstElement) {
-                        e.preventDefault();
-                        lastElement.focus();
-                    } else if (!e.shiftKey && document.activeElement === lastElement) {
-                        e.preventDefault();
-                        firstElement.focus();
-                    }
+        function showOnMap() {
+            closeModal();
+            showPage('map');
+            setTimeout(() => {
+                if (currentFestival) {
+                    map.setView(currentFestival.coordinates, 6);
                 }
+            }, 300);
+        }
+
+        // Compare
+        function initializeCompareSelects() {
+            const selects = ['compare1', 'compare2', 'compare3'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                festivals.forEach(festival => {
+                    const option = document.createElement('option');
+                    option.value = festival.id;
+                    option.textContent = `${festival.name} (${festival.country})`;
+                    select.appendChild(option);
+                });
             });
         }
+
+        function updateComparison() {
+            const ids = [
+                document.getElementById('compare1').value,
+                document.getElementById('compare2').value,
+                document.getElementById('compare3').value
+            ].filter(id => id);
+            
+            if (ids.length < 2) {
+                document.getElementById('comparisonTable').innerHTML = '<p style="padding: 2rem; text-align: center;">Please select at least 2 festivals to compare.</p>';
+                return;
+            }
+            
+            const selectedFestivals = ids.map(id => festivals.find(f => f.id === parseInt(id)));
+            
+            let html = '<table><thead><tr><th>Attribute</th>';
+            selectedFestivals.forEach(festival => {
+                html += `<th>${festival.name}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            const attributes = [
+                {label: 'Country', key: 'country'},
+                {label: 'Continent', key: 'continent'},
+                {label: 'Month', key: 'month', format: (val) => monthNames[val - 1]},
+                {label: 'Significance', key: 'significance'},
+                {label: 'Activities', key: 'activities', format: (val) => val.join(', ')}
+            ];
+            
+            attributes.forEach(attr => {
+                html += `<tr><td><strong>${attr.label}</strong></td>`;
+                selectedFestivals.forEach(festival => {
+                    const value = attr.format ? attr.format(festival[attr.key]) : festival[attr.key];
+                    html += `<td>${value}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('comparisonTable').innerHTML = html;
+        }
+
+        // Favorites functionality
+        function toggleFavorite(event, festivalId) {
+            event.stopPropagation();
+            const index = favorites.indexOf(festivalId);
+            
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showToast('Removed from favorites', 'info');
+            } else {
+                favorites.push(festivalId);
+                showToast('Added to favorites! ❤️', 'success');
+            }
+            
+            // Refresh current view
+            const activePage = document.querySelector('.page.active');
+            if (activePage.id === 'gallery') {
+                renderGallery();
+            } else if (activePage.id === 'home') {
+                initializeFeaturedFestivals();
+            } else if (activePage.id === 'favorites') {
+                renderFavorites();
+            } else if (activePage.id === 'search-results') {
+                const searchTerm = document.getElementById('searchTerm').textContent;
+                const results = festivals.filter(f => {
+                    return f.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           f.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           monthNames[f.month - 1].toLowerCase().includes(searchTerm.toLowerCase());
+                });
+                document.getElementById('searchResultsGrid').innerHTML = results.map(f => createFestivalCard(f)).join('');
+            }
+        }
+
+        function renderFavorites() {
+            const container = document.getElementById('favoritesGrid');
+            
+            if (favorites.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
+                        <i class="fas fa-heart" style="font-size: 4rem; color: var(--accent-purple); opacity: 0.3; margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--gray-text); margin-bottom: 0.5rem;">No favorites yet</h3>
+                        <p style="color: var(--gray-text);">Start adding festivals to your favorites by clicking the heart icon!</p>
+                        <button class="btn btn-primary" onclick="showPage('gallery')" style="margin-top: 1.5rem;">Browse Festivals</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const favoriteFestivals = festivals.filter(f => favorites.includes(f.id));
+            container.innerHTML = favoriteFestivals.map(festival => createFestivalCard(festival)).join('');
+        }
+
+        // Planner functionality
+        function addToPlanner(festivalId) {
+            if (!planner.includes(festivalId)) {
+                planner.push(festivalId);
+                showToast('Added to planner! 📅', 'success');
+                renderGallery();
+                updatePlannerStats();
+            }
+        }
+
+        function removeFromPlanner(festivalId) {
+            const index = planner.indexOf(festivalId);
+            if (index > -1) {
+                planner.splice(index, 1);
+                showToast('Removed from planner', 'info');
+                renderGallery();
+                renderPlanner();
+                updatePlannerStats();
+            }
+        }
+
+        function renderPlanner() {
+            const container = document.getElementById('plannerGrid');
+            
+            if (planner.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
+                        <i class="fas fa-calendar-check" style="font-size: 4rem; color: var(--accent-purple); opacity: 0.3; margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--gray-text); margin-bottom: 0.5rem;">No festivals planned yet</h3>
+                        <p style="color: var(--gray-text);">Start planning your festival journey!</p>
+                        <button class="btn btn-primary" onclick="showPage('gallery')" style="margin-top: 1.5rem;">Browse Festivals</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const plannedFestivals = festivals.filter(f => planner.includes(f.id));
+            // Sort by month
+            plannedFestivals.sort((a, b) => a.month - b.month);
+            container.innerHTML = plannedFestivals.map(festival => createFestivalCard(festival)).join('');
+            updatePlannerStats();
+        }
+
+        function updatePlannerStats() {
+            const plannedFestivals = festivals.filter(f => planner.includes(f.id));
+            const uniqueCountries = new Set(plannedFestivals.map(f => f.country));
+            const uniqueContinents = new Set(plannedFestivals.map(f => f.continent));
+            
+            document.getElementById('plannedCount').textContent = plannedFestivals.length;
+            document.getElementById('countriesCount').textContent = uniqueCountries.size;
+            document.getElementById('continentsCount').textContent = uniqueContinents.size;
+        }
+
+        // Newsletter modal
+        function showNewsletterModal() {
+            if (!newsletterShown) {
+                document.getElementById('newsletterModal').classList.add('active');
+                newsletterShown = true;
+            }
+        }
+
+        function closeNewsletterModal() {
+            document.getElementById('newsletterModal').classList.remove('active');
+        }
+
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletterEmail').value;
+            if (email && email.includes('@')) {
+                showToast('Thank you for subscribing! 🎉', 'success');
+                closeNewsletterModal();
+            } else {
+                showToast('Please enter a valid email address', 'error');
+            }
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${type === 'success' ? 'linear-gradient(135deg, #1E7E34, #2E7D32)' : type === 'error' ? 'linear-gradient(135deg, #C00015, #FF5459)' : 'linear-gradient(135deg, var(--primary-purple), var(--accent-purple))'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+                z-index: 10000;
+                font-weight: 600;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('festivalModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+            const newsletterModal = document.getElementById('newsletterModal');
+            if (event.target === newsletterModal) {
+                closeNewsletterModal();
+            }
+        }
+        // Add CSS animations for toast
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add rating display to festival data (simulated)
+        festivals.forEach(festival => {
+            if (!festival.rating) {
+                festival.rating = (4.5 + Math.random() * 0.5).toFixed(1);
+            }
+            if (!festival.difficulty) {
+                const difficulties = ['Easy', 'Medium', 'Hard'];
+                festival.difficulty = difficulties[Math.floor(Math.random() * 3)];
+            }
+            if (!festival.category) {
+                const categories = Object.keys(categoryIcons);
+                festival.category = categories[Math.floor(Math.random() * categories.length)];
+            }
+        });
+    </script>
+</body>
+</html>
