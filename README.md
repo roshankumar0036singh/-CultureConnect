@@ -5,11 +5,13 @@
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 ![Contributors](https://img.shields.io/badge/Contributors-Welcome-orange?style=flat-square)
 
+
 > Discover the Harmony in Global Celebrations
 
 A beautifully designed, interactive web application that celebrates cultural diversity by showcasing 50+ festivals from 25+ countries across 5 continents. CultureConnect creates an immersive, calming digital environment that encourages cultural exploration and fosters meaningful human connection through shared celebrations.
 
 **Repository:** [https://github.com/roshankumar0036singh/-CultureConnect](https://github.com/roshankumar0036singh)
+demo:(https://roshankumar0036singh.github.io/-CultureConnect/)
 
 ## 🌍 Project Overview
 
