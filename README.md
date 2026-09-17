@@ -1,4 +1,4 @@
-# CultureConnect  Global Festival Explorer
+# CultureConnect Global Festival Explorer
 
 
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)
